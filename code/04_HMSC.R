@@ -1,194 +1,291 @@
 # load data -------------------------------------------------------------------------
 bio <- read_parquet("data/fish_w_env.parquet")
-
+schemes <- readRDS("data/schemes_fish.rds")
 # LOAD PARAMETERS -------------------------------------------------------------------
 source("code/parameters/parameters_HMSC.R")
-
-#- currently there are many NAs in the slope data; needs to be fixd 
-#bio[, slope := NULL]
-
-
-# set loop independent parameters  --------------------------------------------------
-n.data.sets      <- uniqueN(bio$data.set)
-sampled.data.set <- sample(1:n.data.sets, size = 30000, replace = TRUE)
-
 # prepare data ----------------------------------------------------------------------
-for (i in 1:3){
-        #- updater 
-        print(i)
-        # ——— create random sample ——— #
-        #- which data set
-        i.bio.sample <- bio[data.set == unique(data.set)[sampled.data.set[i]]]
-        if(all(is.na(i.bio.sample$abundance))) next()
-        i.n.samples <- min(uniqueN(i.bio.sample$comb_sample_id), n.samples)
-        i.sample.ids <- sample(
-                x = unique(i.bio.sample$comb_sample_id), 
-                size = i.n.samples,
-                replace = F
-                )
-        i.bio.sample <- i.bio.sample[comb_sample_id %in% i.sample.ids]
-        #- establish spatial scale 
-        i.sf <- unique(i.bio.sample, by = "original_site_name")
-        i.sf <- st_as_sf(i.sf, coords = c("x.coord", "y.coord"), crs = 3035)
-        i.sf <- st_distance(i.sf)
-        i.sf <- drop_units(i.sf)
-        i.sf <- i.sf[lower.tri(i.sf)]
-        i.sf <- list(min = min(i.sf), max = max(i.sf), mean = mean(i.sf), median = median(i.sf))
-        # prepare HMSC ----------------------------------------------------------------------
-        #- HMSC needs a Y response matrix. That matrix has one sample per row and one column per taxon
-        #- I need to reshape the data for this. 
-        i.bio.sample2 <- dcast(i.bio.sample, 
-                               formula = comb_sample_id ~ lowest.taxon, 
-                               value.var = "PA", 
-                               fill = 0)
-        
-        #- check for rare taxa (less than 5% of sites)
-        i.bio.sample3 <- apply(
-                i.bio.sample2[,-1], 2, 
-                FUN = function(x) sum(x!=0)
-                )
-        i.bio.sample3 <- names(which(i.bio.sample3 > 5))
-        i.bio.sample3 <- c("comb_sample_id", 
-                           i.bio.sample3)   
-        i.bio.sample4 <- i.bio.sample2[, i.bio.sample3, with = FALSE]
-        i.bio.sample4 <- as.matrix(i.bio.sample4[,-1])
-        
-        #- prepare environmental variables 
-        i.env.samples <- unique(
-                i.bio.sample, 
-                by = "comb_sample_id"
-                )
-        i.env.samples[, `:=` (comb_sample_id = NULL, 
-                              counter = NULL)
-                      ]
-        i.env.samples <- i.env.samples[, x.coord:spi]
-        
-        
-        #- MEMs 
-        i.xy.mat <- matrix(
-                c(i.env.samples$x.coord, 
-                  i.env.samples$y.coord), 
-                ncol = 2, 
-                byrow = F
-                )
-        colnames(i.xy.mat) <- c("x", "y")
-        i.x <- dbmem(xyORdist = i.xy.mat)
-        i.signi <- moran.randtest(i.x, nrepet = 999)
-        i.test.id <- which(i.signi$pvalue== min(i.signi$pvalue))
-        #if (length(i.test.id > 5)) i.test.id <- c(1:5)
-        i.MEM <- i.x[, i.test.id]
 
-        setDT(i.MEM)
-        i.env.samples <- cbind(i.env.samples, i.MEM)
-        i.n.env <- ncol(i.env.samples) - 2 - length(i.test.id)
-        #- prepare HMSC model 
-        #- establish a site level random factor 
-        i.studyDesign <- data.frame(sample = as.factor(1:i.n.samples) )
-        i.rL          <- HmscRandomLevel(units = i.studyDesign$sample)
+#- loop over schemes
+for (o in 1:nrow(schemes)) {
+        set.seed(1)
+        print(paste(o, "of", nrow(schemes)))
+        o.scheme <- schemes[o, ]
+        o.data   <- bio[data.set == o.scheme$data.set & 
+                                year == o.scheme$year & 
+                                month(date) %in% as.numeric(o.scheme$focal_months[[1]])]
+        o.sample.ids <- sample(
+                x = unique(o.data$sample_id),
+                size = o.scheme$samples,
+                replace = F
+        )
+        o.data <- o.data[sample_id %in% o.sample.ids]
+        #- establish spatial scale
+        o.sf <- determine_spatial_scale(o.data)
+        
+        # prepare data for HMSC ----------------------------------------------------------------------
+        # HMSC needs a Y response matrix.
+        # That matrix has one sample per row and one column per taxon
+        # We need to reshape the data for this.
+        o.data2 <- dcast(
+                o.data,
+                formula = sample_id ~ lowest.taxon,
+                value.var = "PA",
+                fill = 0
+        )
+        
+        #- Check for rare taxa (less than 5% of sites)
+        o.data3 <-
+                o.data2[, {
+                        cols_to_keep <- colnames(o.data2)[-1][colSums(o.data2[, -1] != 0) > (o.scheme$samples * 0.05)]
+                        c(cols_to_keep)
+                }, with = FALSE] %>%
+                as.matrix
+        
+        
+        #- prepare environmental variables
+        o.env.samples <- unique(o.data, by = "sample_id")
+        o.env.samples[, `:=` (sample_id = NULL, counter = NULL, comb_sample_id = NULL)]
+        #- If glacial area is zero everywhere, this leads to issues later on.
+        #- Therefore, this variable is removed in such cases.
+        o.cols.to.keep <- o.env.samples[, names(which(lapply(.SD, uniqueN) > 1))]
+        o.env.samples  <- o.env.samples[, ..o.cols.to.keep]
+        rm(o.cols.to.keep)
+        o.env.samples <- o.env.samples[, x.coord:valley_bottom_flattness]
+        # Saturated soil water content has some missing values 
+        # These are imputed here with a OLS Regression
+        if (any(is.na(o.env.samples$saturated_soil_water_content))) {
+                o.row <- which(is.na(o.env.samples$saturated_soil_water_content))
+                o.pre <- o.env.samples[-o.row, ]
+                o.pre <- o.pre[, comb_sample_id := NULL]
+                o.mod <- lm(saturated_soil_water_content ~ ., data = o.pre)
+                o.pre <- o.env.samples[, comb_sample_id := NULL] %>% .[o.row]
+                o.pre <- predict(object = o.mod, newdata =  o.pre)
+                o.env.samples[is.na(saturated_soil_water_content), saturated_soil_water_content := o.pre]
+                rm(o.row, o.pre,o.mod)
+        }
+        #- scale predictor variables 
+        o.env.samples.xy <- o.env.samples[, c("x.coord", "y.coord")]
+        o.env.samples[, c("x.coord", "y.coord") := NULL]
+        o.env.samples %<>% scale()
+        attributes(o.env.samples)$`scaled:scale` <- NULL
+        attributes(o.env.samples)$`scaled:center` <- NULL
+        o.env.samples <- cbind(o.env.samples.xy, o.env.samples)
+        
+        # Asymmetric Eigenvector Maps -------------------------------------------------------
+        # Load river network for the EU HYDRO DEM catchments in which samples are located.
+        o.rivers <- load_river_networks(o.data)
+        o.sites  <- o.data %>%
+                unique(by = "sample_id") %>%
+                st_as_sf(coords = c("x.coord", "y.coord"), crs = 3035) %>%
+                st_transform(4326) 
+        o.network <- prepare_directional_network(o.rivers, o.sites)
+        # Calculate network costs
+        o.cost_matrix <-
+                st_network_cost(x       = o.network,
+                                from    = o.sites,
+                                to      = o.sites,
+                                weights = "weight") %>%
+                drop_units()
+        o.cost_matrix <- create_directional_incidence(o.cost_matrix, o.sites)
+        o.aem_result <- aem(binary.mat = o.cost_matrix$incidence,
+                            weight     = o.cost_matrix$weights)
+        #- select AEM vectors 
+        o.signi.x <- c()
+        for (focal.spe in 1:ncol(o.data3)){
+                
+                fs.env.samples <- o.env.samples[, -c(1, 2)]
+                fs.env.samples <- cbind(o.data3[, focal.spe], fs.env.samples)
+                fs.env.samples$V1 %<>% factor
+                fs.predictors  <- names(fs.env.samples)[-1]
+                fs.formulas    <- paste("V1 ~", paste(fs.predictors, collapse = "+"))
+                fs.formulas    <- as.formula(fs.formulas)
+                fs.model       <- glm(fs.formulas, data = fs.env.samples, family = "binomial")
+                fs.residuals   <- residuals(fs.model)
+                fs.p.values    <- apply(o.aem_result$vectors, 2, function(x) cor.test(x,fs.residuals)$p.value)
+                fs.p.values    <- p.adjust(fs.p.values, method = "holm")
+                if (any(fs.p.values < 0.05)){
+                        fs.sp <- which(fs.p.values < 0.05)
+                        o.signi.x <- append(o.signi.x, fs.sp)
+                        o.signi.x <- unique(o.signi.x)
+                }
+                rm(list = ls()[grepl(pattern = "^fs\\.", x = ls())])
+        }
+        o.AEM     <- 
+                o.aem_result$vectors[, o.signi.x] %>% 
+                data.frame %>% 
+                setDT
+        names(o.AEM) <- paste0("AEM", 1:ncol(o.AEM))
+        o.env.samples <- cbind(o.env.samples, o.AEM)
+        
+        #- Morans eigenvector maps 
+        o.xy.mat <- matrix(
+                c(o.env.samples$x.coord, o.env.samples$y.coord),
+                ncol = 2,
+                byrow = F
+        )
+        colnames(o.xy.mat) <- c("x", "y")
+        o.x       <- dbmem(
+                xyORdist    = o.xy.mat,
+                MEM.autocor = "non-null",
+                store.listw = T
+        )
+        #- Following Bini et al (2009) [10.1111/j.1600-0587.2009.05717.x]. In the paper this is called SEVM-3. 
+        #- Loops over species 
+        o.signi.x <- c()
+        for (focal.spe in 1:ncol(o.data3)){
+                
+                fs.env.samples <- o.env.samples[, -c(1, 2)]
+                fs.env.samples <- cbind(o.data3[, focal.spe], fs.env.samples)
+                fs.env.samples$V1 %<>% factor
+                fs.predictors  <- names(fs.env.samples)[-1]
+                fs.formulas    <- paste("V1 ~", paste(fs.predictors, collapse = "+"))
+                fs.formulas    <- as.formula(fs.formulas)
+                fs.model       <- glm(fs.formulas, data = fs.env.samples, family = "binomial")
+                fs.residuals   <- residuals(fs.model)
+                fs.p.values    <- apply(o.x, 2, function(x) cor.test(x,fs.residuals)$p.value)
+                fs.p.values    <- p.adjust(fs.p.values, method = "holm")
+                if (any(fs.p.values < 0.05)){
+                        fs.sp <- which(fs.p.values < 0.005)
+                        o.signi.x <- append(o.signi.x, fs.sp)
+                        o.signi.x <- unique(o.signi.x)
+                }
+                rm(list = ls()[grepl(pattern = "^fs\\.", x = ls())])
+        }
+        rm(focal.spe)
+        #o.signi   <- moran.randtest(o.x, nrepet = 999)
+        #o.test.id <- which(o.signi$pvalue == min(o.signi$pvalue))
+        o.MEM     <- o.x[, o.signi.x] %>% 
+                data.frame %>%
+                setDT
+        o.env.samples <- cbind(o.env.samples, o.MEM)
+        o.n.env       <- ncol(o.env.samples) - 2 - length(o.signi.x) - ncol(o.AEM)
+        
+        #- prepare HMSC model
+        #- establish a site level random factor
+        o.studyDesign <- data.frame(sample = as.factor(1:o.scheme$samples))
+        o.rL          <- HmscRandomLevel(units = o.studyDesign$sample)
         
         #- create model formula
-        i.env.samples <- i.env.samples[,-c(1,2)]
-        i.predictors  <- names(i.env.samples)
-        i.formulas    <- paste("~", paste(i.predictors, collapse = "+"))
-        i.formulas    <- as.formula(i.formulas)
-        
-        #- define HMSC model 
-        i.mod1 <- Hmsc(
-                Y           = i.bio.sample4,
-                XData       = i.env.samples,
-                XFormula    = i.formulas,
-                studyDesign = i.studyDesign,
-                ranLevels   = list("sample" = i.rL),
+        o.env.samples <- o.env.samples[, -c(1, 2)]
+        o.predictors  <- names(o.env.samples)
+        o.formulas    <- paste("~", paste(o.predictors, collapse = "+"))
+        o.formulas    <- as.formula(o.formulas)
+
+        #- define HMSC model
+        o.mod1 <- Hmsc(
+                Y           = o.data3,
+                XData       = o.env.samples,
+                XFormula    = o.formulas,
+                studyDesign = o.studyDesign,
+                ranLevels   = list("sample" = o.rL),
                 distr       = "probit"
                 
         )
-        # ———— fit model —————
-        i.m1.mcmc = sampleMcmc(
-                i.mod1,
-                thin = thin,
-                samples = samples,
-                transient = transient,
-                nChains = nChains,
-                nParallel = nChains
-        )
         
-        # ————— evaluate model fit ————
-        #- check model fit with the gelman diagnostic
-        i.mpost <- convertToCodaObject(i.m1.mcmc)
-        i.ge    <- gelman.diag(x = i.mpost$Beta)
-        #- species names
-        i.species_names  <- i.ge$psrf%>%rownames%>%stringr::str_extract(pattern = ",\\ .*\\(S") %>% str_remove(",") %>% str_remove("\\(S")%>%str_trim%>%unique
-        # Create empty vectors to store results
-        i.means <- numeric(length(i.species_names))
-        i.maxes <- numeric(length(i.species_names))
-        # Calculate statistics for each species
-        for(j in seq_along(i.species_names)) {
-                # Get rows corresponding to current species
-                j.species_rows <- grep(i.species_names[j], rownames(i.ge$psrf))
-                # Calculate mean and max of point estimates for these rows
-                i.means[j] <- mean(i.ge$psrf[j.species_rows, "Point est."])
-                i.maxes[j] <- max( i.ge$psrf[j.species_rows, "Point est."])
-                rm(list = ls()[grepl("^j\\.", x = ls())])
-        }
-        rm(j)
-        # ——— Variation Partitioning ————
-        # -- for environmental vs space
-        i.preds <- computePredictedValues(i.m1.mcmc)
-        i.MF    <- evaluateModelFit(hM = i.m1.mcmc, predY = i.preds)
-        i.VP    <- computeVariancePartitioning(i.m1.mcmc,
-                                               group = c(
-                                                       rep(1, length(i.predictors) - length(i.test.id)),
-                                                       rep(2, length(i.test.id))
-                                                       ),
-                                               groupnames = c("env", "space")
-        )
-        i.VP2   <- data.table(
-                taxon = rep(colnames(i.VP$vals), each = 3),
-                driver = rep(c("env", "space", "bio"), times = ncol(i.VP$vals)),
-                value  = c(i.VP$vals),
-                r2     = rep(i.MF$TjurR2, each = 3)
-        )
-        i.VP2[r2 < 0, r2 := 0]
-        i.VP2[,scaled_values := value * r2]
-        #- add stochasticity = 1-r2
-        i.VP3 <- data.table(taxon = colnames(i.VP$vals), 
-                            driver = "stochastic",
-                            value = 0,
-                            r2 = i.MF$TjurR2)
-        i.VP3[r2<0, r2 := 0]
-        i.VP3[,value := 1-r2]
-        i.VP3[,scaled_values := 1-r2]
-        i.VP4 <- rbindlist(list(i.VP2, i.VP3))
-        i.VP4$run <- i
-        i.VP4$psrf_mean <- rep(i.means, each = 4)
-        i.VP4$psrf_max  <- rep(i.maxes, each = 4)
-        
-        #- new VP to determine relative predictor importance 
-        i.VP5    <- computeVariancePartitioning(i.m1.mcmc)
-        
-        i.VP6 <- rowSums(i.VP5$vals)
-        #- drop morans eigenvectors 
-        i.VP6 <- i.VP6[str_detect(names(i.VP6), "MEM", negate =T )]
-        #- drop random sample 
-        i.VP6 <- i.VP6[str_detect(names(i.VP6), "Random", negate =T )]
-        i.VP6_total <- sum(i.VP6)
-        i.VP6 <- rank(i.VP6)
-        
-        
-        groupnames = c("env", "space")
-        
-        #- save fitted model 
-        out.list <- 
-                list(biota       = i.bio.sample4,
-                     environment = i.env.samples,
-                     model       = i.m1.mcmc,
-                     VP          = i.VP4, 
-                     coordinates = i.xy.mat,
-                     scale       = i.sf,
-                     importance  = i.VP6
+
+        # FIT HMSC MODEL --------------------------------------------------------------------
+        while.condition <- TRUE
+        o.counter = 1
+        while (while.condition) {
+                print(paste("fitting model", o.counter))
+                # ———— fit model —————
+                o.m1.mcmc = sampleMcmc(
+                        o.mod1,
+                        thin      = thin * o.counter,
+                        samples   = samples * o.counter,
+                        transient = transient * o.counter,
+                        nChains   = nChains,
+                        nParallel = nChains
                 )
+                
+                # ————— evaluate model fit ————
+                #- check model fit with the potential scale reduction factor
+                o.mpost <- convertToCodaObject(o.m1.mcmc)
+                #- purpose-build function (see 00_setup.R)
+                o.means      <- gelman_check(o.mpost)
+                o.means.rate <- sum(o.means >= 1.1) / length(o.means) 
+                if (o.means.rate >= 0.1) {
+                        while.condition <- TRUE
+                        o.counter <- o.counter + 1
+                } else {
+                        while.condition <- FALSE
+                }
+                if (o.counter == 6) {
+                        while.condition == F
+                        o.model.fit = FALSE
+                }
+        }        
         
-        print_i <- ifelse(i <10, paste0(0,i), i)
-        saveRDS(out.list, paste0("data/fitted_models/", print_i, ".rds"))
-        rm(list = ls()[grepl("^i\\.", x = ls())])
-}
+        # variation partitioning ------------------------------------------------------------
+        # -- for environmental vs space
+        o.preds     <- computePredictedValues(o.m1.mcmc)
+        o.MF        <- evaluateModelFit(hM = o.m1.mcmc, predY = o.preds)
+        # how many spatial predictors are there?
+        o.n.spatial <- sum(str_detect(names(o.env.samples), "AEM|MEM"))
+        o.VP    <- computeVariancePartitioning(
+                o.m1.mcmc,
+                group = c(rep(
+                        1, length(o.predictors) - o.n.spatial
+                ), rep(2, o.n.spatial)),
+                groupnames = c("env", "space")
+        )
+        o.VP2   <- data.table(
+                taxon = rep(colnames(o.VP$vals), each = 3),
+                driver = rep(c("env", "space", "bio"), times = ncol(o.VP$vals)),
+                value  = c(o.VP$vals),
+                r2     = rep(o.MF$TjurR2, each = 3)
+        )
+        o.VP2[r2 < 0, r2 := 0]
+        o.VP2[, scaled_values := value * r2]
+        #- add stochasticity = 1-r2
+        o.VP3 <- data.table(
+                taxon = colnames(o.VP$vals),
+                driver = "stochastic",
+                value = 0,
+                r2 = o.MF$TjurR2
+        )
+        o.VP3[r2 < 0, r2 := 0]
+        o.VP3[, value := 1 - r2]
+        o.VP3[, scaled_values := 1 - r2]
+        o.VP4 <- rbindlist(list(o.VP2, o.VP3))
+        o.VP4$run <- o
+        #o.VP4$psrf_mean <- rep(o.means, each = 4)
+        #o.VP4$psrf_max  <- rep(o.maxes, each = 4)
+        
+        #- new VP to determine relative predictor importance
+        o.VP5    <- computeVariancePartitioning(o.m1.mcmc)
+        
+        o.VP6 <- rowSums(o.VP5$vals)
+        #- drop morans eigenvectors
+        o.VP6 <- o.VP6[str_detect(names(o.VP6), "MEM|AEM", negate =
+                                          T)]
+        #- drop random sample
+        o.VP6 <- o.VP6[str_detect(names(o.VP6), "Random", negate =
+                                          T)]
+        o.VP6 <- o.VP6 / sum(o.VP6)
+        #o.VP6 <- rank(o.VP6)
+        
+        #o.groupnames = c("env", "space")
+        
+        #- save fitted model
+        o.out.list <-
+                list(
+                        biota       = o.data3,
+                        environment = o.env.samples,
+                        model       = o.m1.mcmc,
+                        VP          = o.VP4,
+                        coordinates = o.xy.mat,
+                        scale       = o.sf,
+                        importance  = o.VP6,
+                        scheme      = o.scheme
+                )
+        # print_i <- ifelse(i <10, paste0(0,i), i)
+        saveRDS(o.out.list,
+                paste0("data/fitted_models/", data.set, "_", i, "_", o, ".rds"))
+        rm(list = ls()[grepl("^o\\.", x = ls())])
+} # END OF o LOOP
+rm(list = ls()[grepl("^i\\.", x = ls())])
+
+
+
+

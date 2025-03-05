@@ -9,6 +9,9 @@
 f <- dir_ls("data/fitted_models/")
 d <- lapply(f, readRDS)
 d <- lapply(d, function(x)x[[4]])
+for (i in 1:length(d)){
+        d[[i]]$run <- i
+}
 d <- lapply(d, function(x) x[, c("taxon", "driver", "scaled_values", "run")])
 d <- lapply(d, pivot_wider, id_cols = c("taxon", "run"), names_from = driver, values_from = scaled_values)
 d <- lapply(d, setDT)
@@ -38,6 +41,8 @@ d3[, c("run") := NULL]
 d3 <- as.data.frame(d3)
 d3 <- as.matrix(d3) 
 fit <- dirichlet.mle(d3)
+#- alpha are the Dirichlet distribution's parameters.
+#- Each dimension (env, bio, space, stochastic) is assigned one parameter. 
 dens <- ddirichlet(x=d3, alpha = fit$alpha)
 dens <- normalize(dens)
 out <- data.table(run = d$run, 

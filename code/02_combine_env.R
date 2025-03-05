@@ -16,8 +16,8 @@
 slope                   <- dir_ls("E://Arbeit/Data/river_network/hydrography90m/Elevation difference between focal cell and downstream cell/w_catchments/")
 lakes                   <- dir_ls("E://Arbeit/Data/river_network/hydroLAKES/w_catchment/")
 soil_oc                 <- dir_ls("E://Arbeit/Data/soil/new soil/oc_w_catchment/")
-soil_pH                 <- dir_ls("E://Arbeit/Data/soil/Eruope soil ph/w_catchments/")
-floodpl                 <- dir_ls("E://Arbeit/Data/river_network/flood_area/w_catchment/")
+soil_pH                 <- dir_ls("E://Arbeit/Data/soil/Europe soil ph/w_catchments/")
+floodpl                 <- dir_ls("E://Arbeit/Data/river_network/flood_area/w_catchment//")
 streamp                 <- dir_ls("E://Arbeit/Data/river_network/hydrography90m/stream power index/w_catchment/")
 geology                 <- dir_ls("E://Arbeit/Data/LULC/IHME1500_v11/w_catchments/")
 glacier                 <- dir_ls("E://Arbeit/Data/LULC/randolph glacier inventory/w_catchments/")
@@ -32,8 +32,11 @@ upstream_area           <- dir_ls("E://Arbeit/Data/river_network/BasinATLAS_Data
 saturated_water_content <- dir_ls("E://Arbeit/Data/river_network/Maps of indicators of soil hydraulic properties for Europe/w_catchments/")
 valley_bottom_flatness  <- dir_ls("E://Arbeit/Data/river_network/valley bottom flattness/w_catchments/")
 
+dropv <- readRDS("data/dropv_catchments.rds")
 
-all.var <- list(slope,
+
+all.var <- list(
+        slope,
                 lakes,
                 soil_oc,
                 soil_pH,
@@ -50,7 +53,8 @@ all.var <- list(slope,
                 groundwater,
                 upstream_area,
                 saturated_water_content,
-                valley_bottom_flatness)
+                valley_bottom_flatness
+                )
 
 
 # remove catchments I dont need 
@@ -125,11 +129,6 @@ for (i in 1:length(all.var[[1]])) {
         i.f17 <- read_parquet(all.var[[17]][i])
         i.f18 <- read_parquet(all.var[[18]][i])
 
-        #- fix some
-        names(i.f3)[3] <- "soil_oc"
-        names(i.f4)[3] <- "soil_pH"
-        if (i == 1)
-                i.f6[, slope := NULL]
         
         i.f.all <- list(
                 i.f1,
@@ -160,30 +159,11 @@ for (i in 1:length(all.var[[1]])) {
         
         #- thanks to Michael Ohlrogge for this solution
         #- https://stackoverflow.com/questions/13273833/merging-multiple-data-tables
-        i.MergedDT = Reduce(function(...)
+        i.f.all2 = Reduce(function(...)
                 merge(..., by = "ID", all = TRUE), i.f.all)
-        
-        # #check for na
-        # look_for_na <- rowSums(is.na(i.MergedDT))
-        # look_for_na2 <- colSums(is.na(i.MergedDT))
-        # table(look_for_na)
-        # table(look_for_na2)
-        # look_for_na2 %>% sort
-        # #- inspect catchments 
-        # i.v <- sfarrow::st_read_parquet("E:/Arbeit/Data/river_network/eu_hydro_dem/parquet/angerman.parquet")
-        # subset_id <- i.MergedDT$ID[which(look_for_na %in% 6:14)]
-        # i.MergedDT <- i.MergedDT[!ID %in% subset_id]
-        # 
-        # i.v2 <- i.v %>% filter(ID %in% subset_id)
-        # 
-        # i.MergedDT[is.na(soil_pH), unique(ID)]
-        # mapview(i.v2)
-        # 
-        # subset_id <- i.MergedDT$ID[which(is.na(i.MergedDT$mean_snow_equivalent))]
-        # mapview(filter(i.v, ID %in% subset_id))
-        
+        i.f.all2 <- i.f.all2[!ID %in% dropv]
         write_parquet(
-                i.MergedDT,
+                i.f.all2,
                 paste0(
                         "data/catchments/",
                         i.catchment_name,

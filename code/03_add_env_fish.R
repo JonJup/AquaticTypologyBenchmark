@@ -12,10 +12,10 @@ catchments <- dir_ls("data/catchments")
 out        <- list()
 for (i in 1:length(catchments)) {
         i.vec  <- read_parquet(catchments[i])
-        if (str_detect(catchments[i], "Danube")){
-                i.vec %<>% rename(upstream_catchment_area = upstream_catchment_area.x)
-                i.vec %<>% select(!upstream_catchment_area.y)
-        }
+        # if (str_detect(catchments[i], "Danube")){
+        #         i.vec %<>% rename(upstream_catchment_area = upstream_catchment_area.x)
+        #         i.vec %<>% select(!upstream_catchment_area.y)
+        # }
         i.data <- data[ID %in% i.vec$ID]
         out[[i]]  <- merge(i.data, i.vec, by = "ID", all.x = T)
         rm(list = ls()[grepl("^i\\.", x = ls())])

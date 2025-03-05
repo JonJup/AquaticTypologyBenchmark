@@ -1,0 +1,22 @@
+---
+title: "Explore scales for fishes"
+format: html
+editor: visual
+---
+
+```{r}
+library(data.table)
+library(plotly)
+```
+
+
+In this document I explore the spatial scales of fish data sets. 
+
+```{r}
+schemes <- readRDS("data/schemes_w_scale.rds")
+```
+
+```{r, fig.width = 10, fig.height=10}
+plot_ly(data = schemes, y = ~ scale_median, type = "box", boxpoints = "all", jitter = 0.3, color = ~data.set)
+```
+

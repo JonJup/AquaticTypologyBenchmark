@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Explore scales for fishes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="explore_scale_fish_files/libs/clipboard/clipboard.min.js"></script>
+<script src="explore_scale_fish_files/libs/quarto-html/quarto.js"></script>
+<script src="explore_scale_fish_files/libs/quarto-html/popper.min.js"></script>
+<script src="explore_scale_fish_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="explore_scale_fish_files/libs/quarto-html/anchor.min.js"></script>
+<link href="explore_scale_fish_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="explore_scale_fish_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="explore_scale_fish_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="explore_scale_fish_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="explore_scale_fish_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="explore_scale_fish_files/libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+
+<script src="explore_scale_fish_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+
+<script src="explore_scale_fish_files/libs/plotly-binding-4.10.4/plotly.js"></script>
+
+<script src="explore_scale_fish_files/libs/typedarray-0.1/typedarray.min.js"></script>
+
+<script src="explore_scale_fish_files/libs/jquery-3.5.1/jquery.min.js"></script>
+
+<link href="explore_scale_fish_files/libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
+
+<script src="explore_scale_fish_files/libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+
+<link href="explore_scale_fish_files/libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet">
+
+<script src="explore_scale_fish_files/libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Explore scales for fishes</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Lade nötiges Paket: ggplot2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attache Paket: 'plotly'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Das folgende Objekt ist maskiert 'package:ggplot2':
+
+    last_plot</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Das folgende Objekt ist maskiert 'package:stats':
+
+    filter</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Das folgende Objekt ist maskiert 'package:graphics':
+
+    layout</code></pre>
+</div>
+</div>
+<p>In this document I explore the spatial scales of fish data sets.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>schemes <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/schemes_w_scale.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_ly</span>(<span class="at">data =</span> schemes, <span class="at">y =</span> <span class="sc">~</span> scale_median, <span class="at">type =</span> <span class="st">"box"</span>, <span class="at">boxpoints =</span> <span class="st">"all"</span>, <span class="at">jitter =</span> <span class="fl">0.3</span>, <span class="at">color =</span> <span class="sc">~</span>data.set)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in RColorBrewer::brewer.pal(N, "Set2"): n too large, allowed maximum for palette Set2 is 8
+Returning the palette you asked for with that many colors
+Warning in RColorBrewer::brewer.pal(N, "Set2"): n too large, allowed maximum for palette Set2 is 8
+Returning the palette you asked for with that many colors</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item" id="htmlwidget-42bfbded53cc40ae7f7c" style="width:100%;height:650px;"></div>
+<script type="application/json" data-for="htmlwidget-42bfbded53cc40ae7f7c">{"x":{"visdat":{"51f079978fe":["function () ","plotlyVisDat"]},"cur_data":"51f079978fe","attrs":{"51f079978fe":{"y":{},"boxpoints":"all","jitter":0.29999999999999999,"color":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"box"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"yaxis":{"domain":[0,1],"automargin":true,"title":"scale_median"},"xaxis":{"domain":[0,1],"automargin":true},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"fillcolor":"rgba(102,194,165,0.5)","y":[135987.05124101939,155091.61585786962],"boxpoints":"all","jitter":0.29999999999999999,"type":"box","name":"bulgaria_monitoring_fish","marker":{"color":"rgba(102,194,165,1)","line":{"color":"rgba(102,194,165,1)"}},"line":{"color":"rgba(102,194,165,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(178,177,139,0.5)","y":[162222.20531862206,148396.72510639403,163544.50983040049,139854.3587987608,149623.04941983218],"boxpoints":"all","jitter":0.29999999999999999,"type":"box","name":"chezch_chmi_fish","marker":{"color":"rgba(178,177,139,1)","line":{"color":"rgba(178,177,139,1)"}},"line":{"color":"rgba(178,177,139,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(254,216,56,0.5)","y":[169768.87914879838,155864.05781102681,141614.85185701336,197662.12928608578,194129.42907450057,173082.01903919163,180211.44255194569,181084.94368320529,201317.68255997272,180381.93075850263,192825.51986513007,178197.08290557345,186006.38177269162,186363.18242251757,169777.04391541018,183249.30307211119,180411.32960578741,187707.15636534547,185884.36938461673,180724.78246759792,177300.45017985904,184502.02069992249,183135.05682583089,181880.81964667435,184864.73433136652,292318.36741610017,302800.88699125603,274301.0757551865,298713.40568662592,283220.15617749677,289835.44982368319,281043.23118735972,292831.98081806238,288220.50876328774,279959.82157346094,287534.5737414434,282320.21092795004,286244.98847087991,283731.2067667339,285836.58808236034,256290.54017585795,243472.631667604,266130.67408422823,240936.87694542858,236262.94427212296,231931.63435384119,238364.70850492874,247448.16083725024,235859.68431054417,244051.66538446228,239373.55472502476,242230.89872505201,242307.24375788571,102157.8993814314,185082.30974127573,148391.26657759724,185242.83306778071,154465.1448283213,170100.16298541048,167713.09108528032,178899.12304144143,175125.52876211965,170913.38018636277,172217.02325658631,156626.72541522211,153106.97786600571,155419.72890113195,154312.18789997941,70978.761486158124,69600.132242200867,71656.455520306656,65852.887998118385,61577.7391615737,62351.715134265301],"boxpoints":"all","jitter":0.29999999999999999,"type":"box","name":"fish_LAWA_export_theresa","marker":{"color":"rgba(254,216,56,1)","line":{"color":"rgba(254,216,56,1)"}},"line":{"color":"rgba(254,216,56,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(228,156,113,0.5)","y":[132841.81713710746,122421.33197028514,135675.47927083611,144159.99859910351,133294.84450697061,152001.04516808828,141036.04624319487,132164.36998107468,132952.25167358259,135593.5395631323,139566.88877784373,136924.95918095499,126139.93512137668,154388.64018109679,149618.53889285985,135218.20287448668,153121.54975725577,150780.21907909482,146572.7657260953,152003.06485480969,151179.15723863503,148094.19463707259,164836.85246709466,166964.29498400493,139657.37168568926,143225.95446010598,155013.98368042277,146597.40015719802,145950.95046630758,146151.93865678998,141741.06090786884,158676.17026076614,150966.09380947764,152915.94193414773,156440.54835453926,105922.49137300212,102108.09127941933,124343.97433452102,108296.32027326559,108869.63776838264,112475.88869283343,121756.99610875666,117783.58129428778,133620.08364000669,137161.92237090081,134430.05393722458,137027.97712142981,132071.33372420221,144673.97849916504,155752.46413486957,148540.80002909456,153256.59703799454,148126.48658009982,138468.98901389161,132645.0969931279,131513.45240408916,128178.26228081224,113659.72537356045,115283.78350109619,96091.554662700466,119625.08685068521,119891.48843445574,123163.26642667278,112684.20103342686,112984.14617627056],"boxpoints":"all","jitter":0.29999999999999999,"type":"box","name":"fish_denmark_jes","marker":{"color":"rgba(228,156,113,1)","line":{"color":"rgba(228,156,113,1)"}},"line":{"color":"rgba(228,156,113,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(238,145,116,0.5)","y":[237592.12638385402,240079.53582591325,268309.32377649588,225929.31035168396,232030.08969279163,264532.27915017336,257510.69863461438,263046.86564352375,273279.51100518863,259911.26791137032,263833.77991016681,220645.4446909806,235372.12118926176,250988.24883839977,258971.33125895128],"boxpoints":"all","jitter":0.29999999999999999,"type":"box","name":"fish_finland_tapio","marker":{"color":"rgba(238,145,116,1)","line":{"color":"rgba(238,145,116,1)"}},"line":{"color":"rgba(238,145,116,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(201,152,157,0.5)","y":[427095.86949933961,421581.06348098314,369652.80666079861,390660.39051831013,403346.56466485071,421744.58712728322,403565.8955475915,398085.87605242536,399735.88827919378,404010.76718679478,400760.11726915801,401147.10582818999,395412.4716993703,400531.76179123699,408340.0081995487,395111.4878366685,402294.81983636925,402106.00302214629,403809.66496089275,398844.88502522546,401734.24625646329,410763.92887569807,424332.85896359093,458057.94246009958,415775.44770761929,433217.97074498259,426834.41107303614,431509.8753377446,430247.88699894951,427683.13068615063,430723.74173638254,419767.41781400202,431270.45481643325,423371.77363450394,428841.85607335781,426827.97561309347,448084.39948561077,392991.17677745444,418664.74954600935,423028.71895985038,406535.30211235897,434202.00247277669,428485.81202814792,415755.71813273471,422489.56422024348,420993.07427341398,421628.17596373061,415722.47423334187,420520.62854558276,376589.0468887341,391662.83223404497,391740.95661222836,383315.23050247692,401951.29561412951,391581.41076419665,395322.14984519302,397336.68422863731,398996.32540210593,404681.65558526153,399203.61850082868,407377.37355402659,401563.05785898946,407855.7789502223,396009.28431342629,400521.69340858236,395929.35347169364,400869.58778342966,395788.98514609342,371707.90283294336,394874.48629019374,409688.43851780845,424054.03821235074,421807.85662727617,397059.38638046425,412651.30084192741,423013.48673229478,410022.88147455372,418297.46822433651,417138.12269246264,416490.10674627585,414869.85903437925,422513.33141873346,422267.51366701978,418597.87031034485,415280.45446551999,415475.5551180449,416775.47032151592,363485.73042489612,387318.64677254087,410502.04340179008,387282.2704661868,405141.28711789451,374782.28587878426,389610.67248834285,399729.22778959945,405045.32889035391,394559.29043237859,397821.19935464929,397059.23440426844,404328.20553519251,396419.69136795535,405339.29760300298,399136.17831221549,401152.28193206683,402329.78695133218,403403.6235767809,398312.82375379192,398550.5411937288,394698.64186875487,405931.6876926719,406344.51812977425,412013.66697388422,419486.09129456175,419739.8916490007,422419.92549752537,401864.23677628417,412595.53723537078,413694.22937014542,413061.23329215276,411385.88743235089,412864.27518503973,364490.50719761272,390610.98350926721,407700.54740778927,402066.92047042778,359323.35770602408,377685.70884470822,391775.82930858125,383704.64652666793,383142.89153996389,392292.24191549048,386458.14736137842,387338.83665846701,388769.99163250602,386493.01804441202,385703.46985174739,413752.44117941638,439285.96910431999,453528.83926348918,413786.35719094839,423753.54004099511,443271.65387867886,415477.66860030405,425276.41425462591,441032.73180619359,427840.6191335562,425511.64081737626,428449.6546893323,433267.6101701039,434396.09018602001,435842.21354995918,431008.73422178358,422202.37590378674,407120.58808434429,399199.31688115501,403502.35149262659,401090.79519907321,423425.87429856596,418562.43256475287,417118.23285768612,425219.700687256,423741.04142462538,416097.3426738081,409948.87344491942,423304.06521648285,412454.03336215229,414937.95713145606,389902.04627171939,385589.22542157373,375144.4709641902,388108.15020908264,387642.03202280146,400748.98269712907,389183.25973769021,400173.03847427602,401728.47703407879,399091.03170537262,398723.14071840956,388447.35493125429,392155.44325395185,384320.95016921952,422779.54421292141,409433.5983822461,402431.7404337558,410487.28540485835,409785.07712213439,418867.52212746645,402099.38479922712,405574.96459202387,411593.43657746317,408991.32767783816,407044.23497637664,415990.34263460938,404768.87300255406,411340.76661297283,405497.38640845777,417601.63982324628,409647.03751340875,412376.7636101736,409069.23409941146,411550.19520823122,463291.86744123668,445079.53359758807,423515.88131652313,404177.10967229836,433892.95972294535,405486.11253896519,434296.12210332783,431449.26148271497,418398.00760902674,427877.46596257784,413183.87241279148,420755.56061585719,419860.57079393568,419808.64559882123,412747.08057237585,424247.15103570104,427356.31105318054,415871.34628150286,415188.84163803642,421718.47827538883,419629.23291256145,393615.1015905934,402222.01845450432,409454.06574939529,403244.91483958578,390171.16633757495,397092.05131074705,413823.58447849448,381392.39317303512,394047.8822522058,405268.55244185036,394410.68155578501,391723.43176788936,394701.42807511729,389724.04050815746,392201.38022445352,391079.65533777711,397876.76781951729,396556.94799107569,393529.34565575188,393799.30401991087,395705.44232018484,395752.85536337254,422027.90434882429,419938.59399941401,403404.15226469736,415678.62330448785,420357.65319577651,418703.42840661563,419709.68761099328,412962.41703346954,438393.21263671189,428733.60807641014,418548.30643749313,424998.37678479368,422107.38343708758,420312.09994679433,422637.51107693149,425699.1622673152,425362.32168589579,430655.89741052449,424905.26975651074,425033.36207015737,423836.43066391733,419471.75297333021,419621.60896760027,412203.06250268046,414146.53599940985,432833.5108811183,406421.53255447972,404098.08741523919,370549.53652009834,338433.24734382238,364391.29142362572,369328.04130942054,401414.72673148982,420941.77810065669,430166.0810884526,394795.0249710317,405843.55583511922,408988.8085536838,413056.37522435439,413620.1498782257,423924.27045748453,417841.83129962691,414499.47034920007,393029.30931531766,398755.4293089367,395262.29456675117,405965.70757302025,397832.44715875847,401655.20328279526,403601.21605016384,397091.75297155418,388596.74793455016,400127.44195489003,404779.79635727959,402419.3510186905,398701.6311360143,392187.11892743851,405453.25233932072,426172.63425380195,424317.26550276112,417092.86657755147,406439.55860901647,418259.19211791758,414458.85590923484,406871.722166817,417292.21137552825,410521.66077702068,408956.16655589436,373028.44951302989,347313.26383992494,406171.2448407358,376243.63924878009,415085.0113621148,399110.21928820474,391078.79611798725,401847.50420927734,402341.1270918356,396198.30486594181,385150.0569271901,410936.27775877464,409886.16551074479,405163.08560352988,414657.64733079146,411149.25537205074,405727.27874628402,422325.3992611515,415796.27584639809,374394.1433071451,408613.05785539374,398238.38110976754,398763.28517644783,395236.38733396976,424276.91713526292,400547.51266919723,389267.61581712496,394436.01272859337,397942.73765033612,383438.72433789365,389223.57129169768,404225.90832414757,419594.43456802005,403838.42436649173,412021.07267421164,416517.72128704318,402061.01207066351,411868.97544058174,404951.26454577356,469941.01416352013,428760.26690619031,411386.44835806679,417909.1796682016,423464.02313940844,434793.68576768111,406729.14973298571,423618.46241099114,427265.53679469298,421045.9879662802,323443.98685637204,259582.32194218872,247213.59363487919,240294.8705862952,276814.7920457662,291315.97855189932,339391.12855832162,342684.64567691943,418776.42188247922,379826.38315227767,380772.20060474274,194628.90925184544,266774.17831729841,161537.55323857363,169840.7755536107],"boxpoints":"all","jitter":0.29999999999999999,"type":"box","name":"fish_france_naiades","marker":{"color":"rgba(201,152,157,1)","line":{"color":"rgba(201,152,157,1)"}},"line":{"color":"rgba(201,152,157,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(150,159,197,0.5)","y":[69765.721512938879,110101.21499889316,114226.53345454976,51709.91935086358],"boxpoints":"all","jitter":0.29999999999999999,"type":"box","name":"fish_germany_brandenburg","marker":{"color":"rgba(150,159,197,1)","line":{"color":"rgba(150,159,197,1)"}},"line":{"color":"rgba(150,159,197,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(175,154,200,0.5)","y":[61427.29828949018,56625.766488256988,65767.880560204358,64463.315496501054,62815.708644115701,64522.292064282243,62513.384015339834,74735.567031185259,77865.336798681208,76712.278815263417,73924.762921106914,74225.390211358987,74940.694516055606,75266.731135217313,75849.252330360701,75524.08322724927,76064.673567296835,75609.66900935836,75600.93801663148,75708.821106900738,67618.068704519421,66866.965254547307,71734.04285317492,66671.351458517194,69614.488449775003,69789.278631881491,66846.677539390046,74717.853926326847,79950.192411731347,82985.80749367809,78873.494514956255,79200.18468422252,77245.156597740541,77373.86368901364,75112.408331937593,76616.198155024904,80748.071445598209,74771.103221535392,81184.812955712725,78310.417324522263,76757.382199237734],"boxpoints":"all","jitter":0.29999999999999999,"type":"box","name":"fish_germany_hesse","marker":{"color":"rgba(175,154,200,1)","line":{"color":"rgba(175,154,200,1)"}},"line":{"color":"rgba(175,154,200,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(209,146,197,0.5)","y":[101371.70589233945,102710.12636516076,91191.856601373162,100428.14413718379,98701.490970854138,99029.186089966708,98205.389980812455,99025.532000825828,98553.97336458393,98481.59549001386,118221.6002202409,111958.32157468662,118116.52331655247,112550.70519926326,114636.29034500246,116412.04385930295,115579.85461668481,114988.80169389976,115133.29262594148,120130.78583321805,112673.68898958841,118606.43775505773,120221.72820838928,117365.53568994231,121957.90127522992,119118.05916171151,119169.82692533352,119933.9204753196,119493.52749599113,109857.08062401564,114972.08672768311,116659.76029228099,110741.25827872225,114965.13838774111,112076.84355845905,110171.67194458371,113296.16612663315,111324.0399628911,111204.12849262179,120988.93858893125,113933.15418213941,115404.82722135229,111914.40417833993,113933.15418213941,111193.82655033993,114382.45658150496],"boxpoints":"all","jitter":0.29999999999999999,"type":"box","name":"fish_germany_lower_saxony","marker":{"color":"rgba(209,146,197,1)","line":{"color":"rgba(209,146,197,1)"}},"line":{"color":"rgba(209,146,197,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(226,148,184,0.5)","y":[113191.02079162913,108017.93719217903,113966.79694702101,103521.35059940044,111141.77296620252,108482.80677066237,109784.69308112757,108661.75378355612,109619.30361956274,80144.652585846634,74650.362071818556,75619.746605162101,74734.936872399878,72490.966574909136,76812.022269078734,77475.287377668967,73035.668915764967,74861.185391103383,75730.017357330144,75211.622185663524],"boxpoints":"all","jitter":0.29999999999999999,"type":"box","name":"fish_germany_nrw","marker":{"color":"rgba(226,148,184,1)","line":{"color":"rgba(226,148,184,1)"}},"line":{"color":"rgba(226,148,184,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(205,180,144,0.5)","y":[80978.176702776022,76239.009227339688,80865.325277030846],"boxpoints":"all","jitter":0.29999999999999999,"type":"box","name":"fish_germany_rlp_theresa","marker":{"color":"rgba(205,180,144,1)","line":{"color":"rgba(205,180,144,1)"}},"line":{"color":"rgba(205,180,144,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(176,208,99,0.5)","y":[34288.902456251039,33083.773171580251,35101.44639640196,35821.361150433455,37476.190162816376,38698.496222338239,49423.21781225421,53253.748982874284,48373.614415935313,52971.811073183038,47741.906379233813,50735.680028567011,46046.254683991807],"boxpoints":"all","jitter":0.29999999999999999,"type":"box","name":"fish_germany_schleswig_holstein","marker":{"color":"rgba(176,208,99,1)","line":{"color":"rgba(176,208,99,1)"}},"line":{"color":"rgba(176,208,99,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(193,217,75,0.5)","y":[34597.34339809962,35344.682887517971,34214.555203797412,36198.650943264816,39565.1309983748,39247.727651973968,51449.853650925805,53988.757222501226,50008.816703656194,48819.672482883092,51912.884425184144,50245.399425164229,47831.593271397549],"boxpoints":"all","jitter":0.29999999999999999,"type":"box","name":"fish_germany_schleswig_holstein_theresa","marker":{"color":"rgba(193,217,75,1)","line":{"color":"rgba(193,217,75,1)"}},"line":{"color":"rgba(193,217,75,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(227,217,62,0.5)","y":[171430.48057152945,170326.03645981278],"boxpoints":"all","jitter":0.29999999999999999,"type":"box","name":"fish_hungary_ecosurv","marker":{"color":"rgba(227,217,62,1)","line":{"color":"rgba(227,217,62,1)"}},"line":{"color":"rgba(227,217,62,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(245,207,100,0.5)","y":[907912.27090321784,939097.06903071934,741540.91923543112,737267.98801730794,823771.36311247456,777479.91060475167,758259.11192095838,719045.72989156656,744177.60492547101,956861.79392608977,893691.77533422178,925191.8748606391,895427.44607964077],"boxpoints":"all","jitter":0.29999999999999999,"type":"box","name":"fish_mixed_intercalibration_didier_pont","marker":{"color":"rgba(245,207,100,1)","line":{"color":"rgba(245,207,100,1)"}},"line":{"color":"rgba(245,207,100,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(234,199,134,0.5)","y":[313217.47849551856,309621.22436584457,315363.96078673727,303292.03086646053,301663.79833136691,315023.46620853239,309081.97508846538,305611.42607215379,308777.22348793934,311369.0071234284,309821.04356221494,310739.98317394801,303213.52162474371,304242.82066213578,307912.27450097812,306180.30507001816,305952.90885902714,305671.68469431624,323218.39919840568,326828.40812553931,338580.86105166236,320301.75260663504,302667.84563621844,314294.82766254363,298479.71911556,298646.34444959526,301339.81295193854,306056.8134623213,310195.97054510989,312885.32622944226,277116.61798118148,292161.7163284563,285784.52614351991,286710.50332107791,295160.06187310658,305533.10225526645,307214.41319510108,307460.10066976311,315221.83905658114,313454.836232553,310344.19407303852,302412.17103773111,304282.50180569198,308170.20923459774,307085.9313923294,312432.4190466553,305333.59817929677,304574.81438331341,305247.23827631376,314762.95003918698,326279.37349172618,327050.45552735153,322144.29784492101,315552.34048936411,327489.92144519638,322302.43349851202,317480.97234193643,322088.83894811734,316920.15984305914,317223.87939730636,319284.26354166691,318209.03085060546,320297.49669983296,318868.824269109,311366.08672499697,292991.87038537278,309035.00131181756,316947.81559139205,310068.44583933218,308688.26657305914],"boxpoints":"all","jitter":0.29999999999999999,"type":"box","name":"fish_poland_monitoring","marker":{"color":"rgba(234,199,134,1)","line":{"color":"rgba(234,199,134,1)"}},"line":{"color":"rgba(234,199,134,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(219,192,155,0.5)","y":[170790.23519778717,184388.92622678546],"boxpoints":"all","jitter":0.29999999999999999,"type":"box","name":"fish_portugal_monitoring","marker":{"color":"rgba(219,192,155,1)","line":{"color":"rgba(219,192,155,1)"}},"line":{"color":"rgba(219,192,155,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(200,186,167,0.5)","y":[233258.65445826389,220121.25865865496,205437.98216249177,176330.70830697264,189223.24289433975,219549.62226611792,206485.58529235408,176716.56427826936,208509.60498699336,191620.5500402071,180380.00447959537,192126.80506512077,142303.7154844118,193151.34002295454,158098.16239078878,141938.84510855516,157441.06498481578,143222.43628760288,160119.80312839328,159133.31812488736,154845.97931827628,143056.06920179841,164111.6167117765,170072.86423380859,145479.38186808259,150615.88549507561,165361.91754352354,153484.64601489255,159412.90228368127,160964.78331418807,167291.14860185626,152405.34752064262,158577.91803565982,253411.319876658,228814.82474406506,245513.17239489639,252160.56649742284,232788.08640906069,244524.13578774466,246766.11605880054,234427.35518146973,247355.47023878869,247801.12329569136,248393.34222706122,251906.01646007557,202763.70605475182,191033.99352878737,199078.75783085884,201494.77884947264,198482.23999009881,178163.79815640044,195846.07494194264,227706.63430979988,200627.15536897996,196189.06008095125,186395.00134552477,199076.95691009302,177362.18118810089,186934.09950217238,209348.92753509694,202151.81372182723,204644.80569534245,199928.00473112421,201068.6529275369,204591.5625833075,202091.1192317057,200259.37773810595,192434.4590286985,209614.39407016512,214360.67173719121,209597.60909944412,150900.20545024806,190798.96492986905,182982.40563367703,184948.19260564051,182689.94234281805,190918.97655240499,169933.2570838907,181103.27117075061,185293.19494282507,199273.64123612404,192917.69596738782],"boxpoints":"all","jitter":0.29999999999999999,"type":"box","name":"fish_uk_monitoring","marker":{"color":"rgba(200,186,167,1)","line":{"color":"rgba(200,186,167,1)"}},"line":{"color":"rgba(200,186,167,1)"},"xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(179,179,179,0.5)","y":[84150.166135213542,85491.304250413232,86011.51851708474,85501.568393141686,85681.663859680426,81128.572976217954,67346.342727424693,78400.797960491749,86554.320649069108,81633.128998131026,54336.755255004173,67684.57311826371],"boxpoints":"all","jitter":0.29999999999999999,"type":"box","name":"germany_fish_saxony_anhalt","marker":{"color":"rgba(179,179,179,1)","line":{"color":"rgba(179,179,179,1)"}},"line":{"color":"rgba(179,179,179,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
