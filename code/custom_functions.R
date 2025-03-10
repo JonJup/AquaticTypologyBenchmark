@@ -1,36 +1,6 @@
-# setup -----------------------------------------------------------------------------
-library(groundhog)
-pkgs <- c(
-        "adespatial", 
-        "anticlust",
-        "arrangements",
-        "arrow", 
-        "cluster",
-        "data.table",
-        "DirichletReg",
-        "fitdistrplus",
-        "fs",
-        "Hmsc", 
-        "igraph",
-        "indicspecies",
-        "labdsv",
-        "kernlab",
-        "magrittr",
-        "parallelDist",
-        "sirt",
-        "sf",
-        "sfarrow",
-        "sfnetworks",
-        "tidyverse",
-        "units",
-        "vegan",
-        "vegclust",
-        "zetadiv"
-)
-groundhog.library(pkgs,'2024-12-01')
-rm(pkgs)
 
-# DEFINE CUSTOM FUNCTIONS --------------------------------------------------------------
+# describe ---------------------------------------------------------------
+#' @export
 calculate_auc <- function(x, y) {
         # Sort x and y together (in case they're not already ordered)
         ord <- order(x)
@@ -48,7 +18,10 @@ calculate_auc <- function(x, y) {
         
         return(area)
 }
-return(calculate_auc)
+
+
+# describe ---------------------------------------------------------------
+#' @export
 find_max_consecutive_sum <- function(x, window_size = 3) {
         # Input validation
         if (!is.numeric(x)) stop("Input must be numeric")
@@ -78,7 +51,9 @@ find_max_consecutive_sum <- function(x, window_size = 3) {
                 all_sums = window_sums
         ))
 }
-return(find_max_consecutive_sum)
+
+# asd --------------------------------------------------------------------
+#' @export
 render_table <- function(x, variable){
         x2  <- data.table(
                         value                 = x, 
@@ -94,19 +69,20 @@ render_table <- function(x, variable){
                 )
         return(x2)
 }
-return(render_table)
+
 
 
 # Assign score based on qunatiles ---------------------------------------------------
 # This funciton assigns a score between 1 and 5 for each metric based on the quintile it is in.
+#' @export
 quintile_score <- function(x) {
         y <- findInterval(x, quantile(x, probs = seq(0, 1, 0.2))) 
         y[which(y == 6)] <- 5
         return(y)
 }
-return(quintile_score)
 
 
+#' @export
 prop_sample <- function(x, N) {
         # Calculate original proportions
         props <- table(x) / length(x)
@@ -144,6 +120,7 @@ prop_sample <- function(x, N) {
 # HMSC ------------------------------------------------------------------------------
 
 #  ——— determine spatial scale 
+#' @export
 determine_spatial_scale <- function(x){
         o.sf <- st_as_sf(unique(x, by = "original_site_name"),
                          coords = c("x.coord", "y.coord"),
@@ -159,6 +136,7 @@ determine_spatial_scale <- function(x){
         return(o.sf)
 }
 #  ——— PSRF Check 
+#' @export
 gelman_check <- function(posterior){
         o.ge    <- gelman.diag(x = posterior$Beta)
         #- species names
@@ -187,6 +165,7 @@ gelman_check <- function(posterior){
 
 
 # AEM -------------------------------------------------------------------------------
+#' @export
 load_river_networks <- function(data, base_path = "E:/Arbeit/data/river_network/hydrography90m/network_in_catchments/") {
         catchments <-
                 unique(data$ID) %>% 
@@ -201,6 +180,7 @@ load_river_networks <- function(data, base_path = "E:/Arbeit/data/river_network/
         
         return(rivers)
 }
+#' @export
 create_directional_incidence <- function(cost_matrix, sites) {
         # Create adjacency matrix based on flow direction
         n_sites <- nrow(cost_matrix)
@@ -254,7 +234,7 @@ create_directional_incidence <- function(cost_matrix, sites) {
         
         return(list(incidence = incidence, weights = weights))
 }
-
+#' @export
 prepare_directional_network <- function(rivers, sites) {
         
         site_buffer <- sites %>%
@@ -278,8 +258,8 @@ prepare_directional_network <- function(rivers, sites) {
         return(network)
 }
 
-
-
+# asd --------------------------------------------------------------------
+#' @export
 balance_clusters <- function(data, clusters, min_size) {
         # Count members in each cluster
         cluster_counts <- table(clusters)
@@ -290,7 +270,7 @@ balance_clusters <- function(data, clusters, min_size) {
                 needed <- min_size - cluster_counts[small_cluster]
                 
                 # Find cluster centers
-                centers <- aggregate(data, by = list(clusters), FUN = mean)
+                centers <- stats::aggregate(data, by = list(clusters), FUN = mean)
                 
                 # For each small cluster, find closest points from large clusters
                 large_clusters <- which(cluster_counts > min_size + needed)
@@ -312,52 +292,56 @@ balance_clusters <- function(data, clusters, min_size) {
         return(clusters)
 }
 
-source("code/function_adjust_centroids_and_sites.R")
+# asd --------------------------------------------------------------------
+#' Adjust cluster centroids and observation distances
+#' 
+#' This function performs two adjustments:
+#' 1. Moves cluster centroids further apart or closer together
+#' 2. Adjusts how close observations are to their assigned centroids
+#' 
+#' @param centroids Matrix where each row is a centroid and columns are variables
+#' @param observations Matrix where each row is an observation and columns are variables
+#' @param cluster_assignments Vector indicating which cluster each observation belongs to
+#' @param centroid_adjustment_factor Numeric controlling how centroids move relative to each other:
+#'        positive = move centroids further apart, negative = move centroids closer together
+#' @param compactness_factor Numeric controlling how observations move relative to their centroids:
+#'        positive = move observations closer to centroids, negative = move observations away from centroids
+#' 
+#' @return List containing the adjusted centroids and observations
+#' 
+#' @export
+adjust_clusters <- function(centroids, observations, cluster_assignments,
+                            centroid_adjustment_factor = 0, compactness_factor = 0) {
+        # Step 1: Calculate the grand centroid (center of all centroids)
+        grand_centroid <- colMeans(centroids)
+
+        # Step 2: Move all centroids relative to grand centroid
+        scaling_factor <- 1 + centroid_adjustment_factor
+        new_centroids <- grand_centroid + scaling_factor * (centroids - grand_centroid)
+
+        # Step 3: Move observations with their centroids and adjust their distances to centroids
+        new_observations <- matrix(0, nrow = nrow(observations), ncol = ncol(observations))
+        for (i in 1:nrow(observations)) {
+        cluster_id <- cluster_assignments[i]
+
+        # Get original and new centroid for this observation
+        orig_centroid <- centroids[cluster_id, ]
+        new_centroid <- new_centroids[cluster_id, ]
+
+        # Calculate the vector from original centroid to observation
+        centroid_to_obs_vector <- observations[i, ] - orig_centroid
+
+        # Apply compactness adjustment: scale the distance from centroid to observation
+        # compactness_factor > 0: observations move closer to centroids
+        # compactness_factor < 0: observations move further from centroids
+        adjusted_vector <- centroid_to_obs_vector * (1 - compactness_factor)
+
+        # Place observation relative to new centroid position
+        new_observations[i, ] <- new_centroid + adjusted_vector
+        }
+        colnames(new_observations) <- colnames(observations)
+        # return(list(centroids = new_centroids, observations = new_observations))
+        return(new_observations)
+}
 
 
-
-# old -------------------------------------------------------------------------------
-
-
-
-# my.cs <- function(x){
-#         out <- meandist(dist = x, grouping = j.tv)
-#         out <- unlist(summary(out))["CS"]
-#         return(out)
-# }
-# return(my.cs)
-#- wrapper to compute average silhouette width
-# my.asw <- function(x){
-#         out <- silhouette(dist = x, x = j.tv)
-#         out <- mean(out[, "sil_width"])
-#         return(out)
-# }
-# return(my.asw)
-#- wrapper for metrics based on indicator species analysis
-# my.isa <- function(x){
-#         out <- multipatt(x, 
-#                          j.tv, 
-#                          func = "indval",
-#                          control = how(nperm = 500))
-#         out1 <- nrow(out$sign[which(out$sign$p.value<=0.05), ])/nrow(out$sign)
-#         out2 <- mean(out$sign$p.value, na.rm = T)
-#         return(c(out1, out2))
-# }
-# return(my.isa)
-#- wrapper for ISAMIC
-# my.isamic <- function(x){
-#         out <- isamic(
-#                 comm = x, 
-#                 clustering = j.tv)
-#         out <- mean(out)
-#         return(out)
-# }
-# return(my.isamic)
-#- wrapper for ANOSIM
-# my.anosim <- function(x){
-#         out <- anosim(x, grouping = j.tv, permutations = 500, parallel = 6)
-#         out1 <- out$statistic
-#         out2 <- out$signif
-#         return(c(out1, out2))
-# }
-# return(my.anosim)
