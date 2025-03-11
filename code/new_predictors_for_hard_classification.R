@@ -44,3 +44,5 @@ q.newenv %<>% lapply(function(x) {
 })
 i.contraction.points %<>% append(param_combinations$compactness)
 i.contraction.centroids %<>% append(param_combinations$centroid_adjustment)
+rm(s.order)
+rm(asw)

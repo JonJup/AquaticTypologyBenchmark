@@ -24,12 +24,11 @@ box::use(
         code/custom_functions[adjust_clusters, balance_clusters, ]
 )
 
+taxon = "fish"
 
 # setup loop ------------------------------------------------------------------------
-model.files <- dir_ls("data/fitted_models/")
+model.files <- dir_ls(paste0("data/fitted_models_", taxon,"/"))
 n_types = c(4,5,10)
-# how many orders to evaluate for zeta diversity 
-v.orders <- 10
 # number of evaluations model
 max.q <- 3
 within.q <- 30
@@ -177,8 +176,26 @@ for (i in 1:length(model.files)){
                 rm(list = ls()[grepl("^j\\.", x = ls())])
         }
         rm(j)
+        i.out <- lapply(i.out, unlist, recursive = FALSE)
+        i.out <- unlist(i.out, recursive = FALSE)  
+        out_list <- 
+                list(
+                        data = i.out,
+                        number_of_variables = i.n.variables,
+                        contraction_points  = i.contraction.points,
+                        contraction_centroids= i.contraction.centroids, 
+                        variable_importance = i.importance,   
+                        asw = i.asw, 
+                        hard_cluster_assignment = i.cluster.assignments, 
+                        fuzzy_cluster_assignment = i.fuzzy.assignments 
+                )
+        name.i <- ifelse(i < 10, paste0("0",i), as.character(i))
+        saveRDS(out_list, paste0("data/simulated_data/simulated_data_", taxon, "_", name.i, ".rds"))
+        rm(name.i)
+        rm(out_list)
+        rm(list = ls()[grepl("^i\\.", x = ls())])
 } 
-
+rm(i)
 
 
 # rm(i)
