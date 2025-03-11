@@ -124,7 +124,7 @@ for (i in 1:length(model.files)){
 
                         
                         #- store cluster assignment for later 
-                        i.cluster.assignments[[q]] <- q.clusters
+                        i.cluster.assignments[[length(i.cluster.assignments) + 1]] <- q.clusters
                         #j.fuzzy.assignments[[q]]   <- q.fc.b
                         q.env[, type := q.type]
                         #q.env[, type.fuzzy := q.fc.b]
