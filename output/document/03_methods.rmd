@@ -1,0 +1,145 @@
+## Methods 
+
+### The data sets 
+<!-- provenance of data --> 
+We have compiled occurrence data sets of diatoms, aquatic macroinvertebrates, fish, and aquatic macropyhtes (Tables S1-S4).  
+These data sets range from few sites () to many, from moments in time() to long-term time series, and from local scales () to multiple countries (). 
+
+We will train HMSC models with each data set to predict communities for similar but artificial environments. Environments which are simulated to follow typology systems with known qualities.  
+Evaluating the congruence between simulated biotic communities and artificial typology systems over many data sets will provide us with ecologically plausible benchmarks for the selected evaluation metrics. 
+
+<!-- subsampling --> 
+Each data set will be subsampled. 
+Within each data set, we will stratify the subsampling by year.
+Within each year, we will restrict the data to the three consecutive months with the most samples. 
+If the number of samples in these months ($N_{months}$) < 100, this year will not be evaluated for this data set.
+If $N_{months} \ge 100$ samples, our subsampling methodology will incorporate a descending-frequency approach based on one hundred-sample increments. 
+The process will begin by dividing $N_{months}$ by 100 (rounded down) to determine the number of increments $N_{inc}$. 
+For each increment $i = 1, \dots, N_{inc}$, we will generate $(N_{inc} - (i-1))$ random subsamples, each containing $i \times 100$ samples. 
+When the remainder from dividing $N_{months}$ by 100 exceeds 0.5, we will include one additional sample at the maximum size. 
+This approach ensures thorough sampling coverage while maintaining computational feasibility.
+To maintain computational feasibility, the maximum number of total subsets per data set is six. 
+For each subsample, we will determine the spatial scale (minimum, median, and maximum spatial distance between sampling locations) with the sf R package (ref) and the taxonomic resolution as fraction of taxa identified to species, genus, family, or higher level.  
+Lastly, we will remove taxa that occur in less than 5% of sampling sites for this subset. 
+
+### HMSC Model  <!-- defend choice? --> 
+To each subset we will fit a Hierarchical model of species communities [HMSC, @ovaskainenJointSpeciesDistribution2020] to establish the relationship between taxon occurrence and environmental variables, space, biotic interactions, and stochasticity. 
+HMSC is a hierarchical Bayesian latent variable regression model, which is fit with block-conditional Gibbs MCMC sampler.
+The model will be fit with the Hmsc R package [3.0-13] [@tikhonovHmscHierarchicalModel2022] and a probit residual distirbution. 
+For each subset an initial model will be fit with two chains, 2000 samples, a thinning of two, and a transient period of 2000 samples.  
+Model fit will be evaluated with the potential scale reduction factor [PSRF; @gelmanInferenceIterativeSimulation1992] as implemented in the coda package [0.19-4.1] [@plummerCODAConvergenceDiagnosis2006]. 
+The PSRF compares the variance between multiple chains to the variance within each chain to assess chain convergence. 
+If 10% of PSRFs are > 1.1 the model is refit.
+We will iteratively increase the chain lengths by increments of 1000 until <10% of PSRFs are > 1.1.
+If this is not achieved with a sample size of 10000, the subset will be discarded from further analyses. 
+Thinning is always the number of chains divided by 1000, and the length of the transient equals the number of samples.    
+
+### Environmental data
+
+We will compile and extensive data base of environmental variables relevant for freshwater organisms (Table 1). 
+Each variable will be summarized at the catchment scale. Catchments will be derived from the EU Hydro DEM catchment data base [@eeaEUHydroRiverNetwork2019]. 
+
+```{r Table1, echo=FALSE}
+
+ft
+
+```
+
+<!-- Space --> 
+The effects of spatial proximity will be captured Moran's Eigenvector Maps [MEM; @draySpatialModellingComprehensive2006].
+MEM transform Euclidean spatial distance matrices into eigenfunctions.
+MEM gives rise to a large number of spatial eigenfunctions (typically number of samples - 1). 
+Different methods to select from them have been proposed an lead to significantly different outcomes [@biniCoefficientShiftsGeographical2009].
+We will use all spatial eigenfunctions that correlate statistically significant (at $\alpha = 0.05$) with the residuals of logistic regression fit to the single taxa.
+Before the selection, all *p*-values are adjusted for multiple testing using Holm's step-down procedure [@westfallResamplingbasedMultipleTesting1993].
+@biniCoefficientShiftsGeographical2009 has shown that this way of selecting spatial eigenfunctions has minimal impact on the estimated regression coefficients for environmental variables. 
+MEM will be implemented with the adespatial R package [0.3-2.4] [@drayAdespatialMultivariateMultiscale2024].
+
+### Modellings species communities 
+We will interpret all the variance explained by environmental variables as abiotic filtering, the variance explained by spatial eigenvectors as spatial filtering, and the variance of the latent variables as biotic interactions. 
+The last point is contentions [e.g., @blanchetCooccurrenceNotEvidence2020; @dormannBioticInteractionsSpecies2018; @valleSpeciesAssociationsJoint2023], as the latent variables can also capture unmeasured environmental drivers. 
+In our case this will likely include local scale variables such as sediment composition. 
+We expect therefore to slightly overestimate the relevance of biotic interactions and will keep this in mind in any interpretations of the results. 
+Tjur's $R^2$ [@tjurCoefficientsDeterminationLogistic2009] will be used to evaluate the overall explained variation in the biotic data.  
+The unexplained variance $1-R^2_{Tjur}$, will be interpreted as stochasticity in community composition.
+Each of these values will be averaged across species.
+For each fitted model, we thus obtain a vector of four numbers, which sum to 1, estimating the assembly mechanisms of this meta-community. 
+Over all the models we will run, we will be able to derive a multivariate probability distribution of assembly mechanisms. 
+As each mechanism itself can range between 0 and 1, their distribution can likely be captured by a beta distribution. 
+The Dirichlet distribution is a multivariate distribution with beta marginals, and thus able to represent this.
+
+### Simulating typologies 
+The fitted models will be used to simulate new biotic data at the same sampling locations. 
+While spatial coordinates will remain the same, we will slightly adjust the environmental variables. 
+Before, we alter the variables we will cluster the sites into environmental types, i.e., we will create artificial typologies.  
+These typologies will not be based on all the available environmental variables but rather on a random subset. 
+For each  subsample we will draw nine sets of environmental variables, randomizing both the number of variables (between three and all) and their identity. 
+These selected environmental variables will then be submitted to a k-means clustering algorithm.
+We will test between two and ten clusters and pick the solution with the highest average silhouette width [ASW; @kauffmanFindingGroupsData1990] which has at least ten samples in the smallest cluster. 
+If all classifications have a group with $<$ 10 samples, we will pick the solution with the most classes for which only one class has $<$ 10 samples and balance the classes by moving the samples from other classes that are closest to the small classes centroid to that class until it has 10 members.
+The quality of the final k-means classification is assessed with the ASW. 
+Additionally, we compute a fuzzy C means classification [FCM; @dunnFuzzyRelativeISODATA1973] of the same data. 
+We will use the same number of centers as in the k-means classification and the implementation available in the vegclust [] R package [@decaceresDissimilarityMeasurementsSize2013]. 
+The quality of this fuzzy classification will be quantified with the normalized partitioning entropy [@bezdekPatternRecognitionFuzzy2013]. 
+
+After creating this artificial typology system, we will alter the environmental variables. 
+These alterations will alter the quality of the typology system by dilating (i) the distance between centroids and (ii) the distances between samples and their centroid. 
+An good typology has high compactness (sites close to centroid) and separation (centroids far apart).
+By randomly varying these two properties thirty times for each artificial typology, we create a total of 270 landscapes for each subset. 
+To modify separation, we first compute the location of overall centroid in environmental space.
+We then randomly draw a scaling factor $\gamma_s$ between 0 and 2 from a uniform distribution. 
+The new centroids are then computed as $C_{new} = C_{overall} + \gamma_s (C_{old} - C_{overall})$. 
+To adjust the compactness, we draw a second scaling factor $\gamma_c$ between -1 and 1. 
+We multiply the distance between original site location and original centroid with $\gamma_c$ and add the result to the new centroid locations to obtain the new site location. 
+<!-- non fuzzy --> 
+<!-- fuzzy     --> 
+
+### Evaluating typologies 
+We will evaluate each typology with a selection of recommended and practically used methods. 
+An extensive and harmonized explanation of all the metrics can be found in the supplementary materials (SX). 
+<!-- add references --> 
+We will evaluate biovalidity with Analysis of Similarities (ANOSIM), Classification Strength (CS), Permutational Multivariate Analysis of Variance (PERMANOVA), Indicator Species Analysis, Indicator Species Analysis Minimizing Intermediate Constancies (ISAMIC), and Area under the zeta diversity decline curve. 
+
+The ANOSIM will be run in a pairwise fashion for each possible combination of types, as suggested in @clarkeChangeMarineCommunites2014. 
+As test statistics, we will evaluate the minimum, mean, and maximum pairwise R values for each simulated data set. 
+For the computation of the AUCζ, we sightly deviate from the original proposal in @jupkeEuropeanRiverTypologies2023. While we still evaluate ζ-diversity for ranks 1 to 10 and still scale with the $\alpha$ diversity (i.e., $\zeta_1$), we now divide the each $AUC\zeta$ by a baseline $AUC\zeta^b$ which is the $AUC\zeta$ of inter-type comparisons. 
+
+
+<!-- software --> 
+All distance based methods will use Jaccard distance matrices of predicted biotic communities computed with the parallelDist package [@eckertParallelDistParallelDistance2022]. 
+Classification strength, ANOSIM, PERMANOVA will be computed with functions from the vegan package [@oksanenVeganCommunityEcology2022]. 
+$AUC\zeta$ will be computed with purpose written code and using the zetadiv package [@latombeZetadivPackageComputing2018]. 
+Indicator values will be computed with indicspecies [@decaceresIndicspecies2019] and ISAMIC with labdsv [@robertsPackageLabdsv2007]. 
+Some of the computations will be parallelized with the R packages foreach [1.5.2] [@microsoftForeachProvidesForeach2022] and doParallel [1.0.17] [@corporationDoParallelForeachParallel2022]. 
+All code is available ADD GITHUB REPO
+
+### Evaluating typologies - the theory
+
+
+
+
+### Deriving benchmarks 
+
+To derive benchmarks from these evaluations we will use Random Forest regression analyses using the tidymodels framework (reference). 
+The analysis will be performed separately for each evaluation metric and taxon.
+In total, we will fit 80 random forest models (four taxa and 20 evaluation metrics). 
+<!-- Tuning --> 
+The Random Forest model will be implemented with Ranger (reference) with three hyperparameters subject to optimization: the number of trees, the number of variables randomly sampled at each split, and the minimum node size.
+We will employ a grid search strategy for hyperparameter tuning, using a $5\ \times 5$ grid for each parameter. 
+The data will be split into training (75%) and testing (25%) sets. 
+Ten-fold cross-validation will be applied to the training set to evaluate model performance across hyperparameter combinations.
+<!-- TODO Check that all variables are included -->  
+As predictors the model will use the number of variables considered in the artificial typology, the cumulative importance of these variables (according to the variation partitioning), the average silhouette width of the environmental variables in the typology, the dilation of points relative to their centroid, the dilation of centroids relative to each other, the minimum, maximum, mean, and median distance among samples, the number of samples, the fraction of variation explained by environmental variables, space, biotic interactions, and stochasiticity, and the taxonomic resolution of the data set. 
+Following hyperparameter tuning, we select the model configuration that minimized root mean square error (RMSE) across folds. 
+The final model will be fitted to the complete training set and evaluated on the held-out test set.
+Permutation-based variable importance will be specified to quantify predictor contributions.
+To interpret the fitted models, we generated two types of visualizations: (1) variable importance plots using permutation-based importance scores to identify the most influential predictors, and (2) partial dependence plots for the top predictors to visualize the marginal effect of each variable on the predicted response while holding other variables constant.
+This fitted model will be able to provide benchmarks.
+
+
+### Software 
+To ensure replicability, we will use the groundhog [3.2.2] [@simonsohnGroundhogVersioncontrolCRAN2025] to use the package versions that were available on the 1st of December 2024.
+These are also the versions that are referenced throughout the text. 
+multiresponse GLMs were implemented with mvabund [@wangMvabundStatisticalMethods2022],
+Checks of posterior distributions were conducted with coda ... (),
+Data wrangling will be done with data.table [1.16.2] [@barrettDatatableExtensionDataframe2024], dplyr [] [@], lubridate [] [@], 

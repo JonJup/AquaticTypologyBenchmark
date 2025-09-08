@@ -1,0 +1,120 @@
+Consider a set of $N$ sites classified into $T$ distinct types $t_1, t_2, \dots, t_T \in \tau$, where $\tau$ represents the complete typology system.
+Let $x_i$ be a site and $\tau(x_i)$ the function that returns its type assignment.
+For any site $x_i$, let $\bar{d}(x_i,\mathbf{x}_{\tau(x_i)})$ represent the mean dissimilarity between $x_i$ and all other sites within its assigned type $\tau(x_i)$.
+For any other type $t_x \in \tau \setminus \{\tau(x_i)\}$, let $\bar{d}(x_i,\mathbf{x}_{t_x})$ denote the mean dissimilarity between $x_i$ and all sites in type $t_x$.
+The neighbor type of $x_i$, denoted as $b(x_i)$, is defined as the type (excluding $\tau(x_i)$) that minimizes the mean dissimilarity:
+$$b(x_i)=\underset{x \in \tau \setminus \{\tau(x_i)\}}{argmin}\ \bar{d}(x_i,\mathbf{s}_{t_x})$$
+The silhouette width quantifies how well $x_i$ fits within its assigned type compared to its neighbor type. For site $x_i$, it is computed as:   
+$$sw(x_i) = \dfrac{\bar{d}(x_i, \mathbf{x}_{b(x_i)}) - \bar{d}(x_i,\mathbf{x}_{\tau(x_i)})}{max\big\{\bar{d}(x_i, \mathbf{x}_{b(x_i)}), \bar{d}(x_i,\mathbf{x}_{t_{\tau(x_i)}})\big\}}$$
+
+The Average Silhouette Width (ASW) is calculated as the mean of individual silhouette  widths across all sites:
+$$ASW = \dfrac{1}{N}\Sigma_{i=1}^N sw(x_i)$$
+The ASW ranges from -1 to 1, where -1 indicates the poorest possible type assignments and 1 represents optimal type assignments.
+
+<!-- Classification Strength --> 
+The Classification Strength [CS, @vansickleUsingMeanSimilarity1997] provides another measure to evaluate typology systems by comparing similarities within and among types.
+Given a similarity matrix $\mathbf{S}$ with elements $s_{ij}$ where $i$ and $j$ index over sites, we define the within type similarity for type T as:
+$$W_T = \dfrac{1}{K_T} \sum_{i = 1}^N \sum_{\substack{j = 1\\ j \neq i}}^N s_{ij} \times \epsilon_{ij}$$
+
+where $\epsilon_{ij} = 1$ if sites $i$ and $j$ both belong to type $T$ (i.e., $\tau(s_i)=\tau(s_j) = T$), and $0$ otherwise.
+$K_T$ represents the total number of pairwise comparisons within type $T$, ensuring $W_T$ represents the mean similarity among sites of type $T$.
+The among-type similarity for type $T$ is defined analogously: 
+$$B_T = \dfrac{1}{L_T} \sum_{i = 1}^N \sum_{\substack{j = 1\\ j \neq i}}^N s_{ij} \times (1-\epsilon_{ij})$$ 
+where $L_T$ is the number of comparisons between sites in type $T$ and sites in all other types
+The type-specific classification strength is calculated as:
+$$CS_t = W_t - B_t$$
+This measure quantifies how much more similar sites are to others within their assigned type compared to sites in different types.
+The difference to SW is, that CS considers all other types and not only the neighbor.
+The Classification Strength for the complete typology system is computed as a weighted average of type-specific Classification Strengths:
+$$CS = \sum_t^T \dfrac{n_t}{N} CS_t$$
+where $n_t$ is the number of sites in type $t$ and $N$ is the total number of sites. 
+Similar to the ASW, CS values range from -1 to 1, with higher values indicating more distinct and well-defined types.     
+
+<!-- ANOSIM --> 
+The Analysis of Similarities [ANOSIM, @clarkeNonparametricMultivariateAnalyses1993] evaluates typology systems using ranked similarities rather than raw similarity values. 
+Let $\mathbf{S}_{rank}$ be the matrix of ranked similarities derived from $\mathbf{S}$, where lower ranks are assigned to higher similarities. 
+For any pair of sites $(i,j)$, the element $s^{rank}{ij}$ represents the rank of the corresponding similarity $s_{ij}$.
+We define $\bar{r}_W$ as the mean rank of within-type similarities and $\bar{r}_B$ as the mean rank of between-type similarities.
+The ANOSIM R statistic is computed as:
+$$R = (\bar{r}_B - \bar{r}_W)/(M/2)$$
+where $M = N(N-1)/2$ 
+Like ASW and CS, the ANOSIM R statistic ranges from -1 to 1.
+A permutational *p*-value for R can be computed.     
+
+Permutational multivariate analysis of variances [PERMANOVA, @andersonNewMethodNonparametric2001] evaluates typology systems by analyzing the variance in dissimilarities among sites.
+For a dissimilarity matrix $\mathbf{D}$ with elements $d_{ij}$, we compute two sums of squares:
+The total sum of squares: 
+$$SS_{total} = \dfrac{1}{N}\sum_{i=1}^{N-1} \sum_{j=i+1}^{N} d_{ij}^2$$
+
+The within-type sum of squares:
+$$SS_{within} = \dfrac{1}{N}\sum{i=1}^{N-1} \sum{j=i+1}^{N} d_{ij}\times \epsilon_{ij}$$
+
+The pseudo F-ratio is then computed as:
+$$F = \dfrac{SS_{within} / (T-1)}{SS_{total} / (N-T)}$$
+Larger F-ratios indicate greater separation between type centroids in multivariate space. 
+The statistical significance of the F-ratio can be assessed through a permutation test. 
+
+<!-- non geometric methods --> 
+Non-geometric measures evaluate typology systems directly from abundance or occurrence data, without requiring similarity metrics.
+These include the indicator species analysis [IndVal, @dufreneSpeciesAssemblagesIndicator1997], Indicator Species Analysis Minimizing Intermediate Constancies [ISAMIC, @robertsLabdsvOrdinationMultivariate2023], and Area Under the ζ-diversity Decline Curve [AUCζ, @jupkeEuropeanRiverTypologies2023].    
+<!--IndVal --> 
+The indicator species analysis combines two components for each taxon $h$ in type $t$: concentration ($A_{ht}$) and relative frequency ($F_{ht}$). 
+A perfect indicator (IndVal = 1.0) occurs exclusively in one type (perfect concentration) and is present in all samples of that type (maximum frequency).
+For the group-equalized IndVal variant, which accounts for uneven sample sizes across types [@decaceresImprovingIndicatorSpecies2010], we compute the concentration component as:
+$$A^g_{ht} = \frac{a^g_t}{a^g}$$
+where $a^g_t = \frac{N}{k}\sum_{i \in t}(a_i/N_i)$ is the group-equalized sum of abundances in type $t$, and $a^g = \frac{N}{k}\sum_{i \in K}(a_i/N_i)$ is the total group-equalized abundance.
+The frequency component as:
+$$B_{ht} = \frac{n_{ht}}{N_t}$$
+where $n_{ht}$ is the number of occurrences of taxon $h$ in type $t$, and $N_t$ is the total number of sites in type $t$.
+The group-equalized IndVal for taxon $h$ in type $t$ is then:
+$$IndVal^g_{ht} = \sqrt{A^g_{ht} \times B_{ht}} \times 100$$
+For each species, only the highest IndVal is considered. 
+$$IndVal^g_h = \max_{t}(IndVal^g_{ht})$$
+Statistical significance of each IndVal is assessed through a permutation test. 
+Since multiple tests are performed (one for each taxon), the resulting p-values are adjusted using Holm's step-down procedure to control for multiple comparisons [@westfallResamplingbasedMultipleTesting1993].
+Two metrics evaluate the overall quality of the typology system:
+1. The proportion of significant indicator taxa (at $\alpha = 0.05$), denoted as $N_{sig}$:
+$$N_{sig}=\frac{1}{H}\sum_{h=1}{H}I(p_h<0.05)$$
+where $I()$ is the indicator function, $H$ the number of species and $p_h$ is the adjusted p-value for taxon $h$. 
+2. The mean adjusted p-value across all taxon-type combinations:
+$$\bar{p} = \frac{1}{H} \sum_{h=1}^H p_h$$
+
+A superior typology system is characterized by a higher $N_{sig}$ and a lower $\bar{p}$. 
+
+The Indicator Species Analysis Minimizing Intermediate Constancies (ISAMIC) evaluates how consistently species occur within types. 
+For each taxon $h$ and type $t$, we calculate:
+$$ISAMIC = \frac{\sum_{h=1}^{H}\left\{\left(2\sum_{t=1}^{T}|F_{ht}-0.5|\right)/T\right\}}{N}$$ 
+The metric quantifies the predictability of species occurrence patterns.
+Values close to 1 indicate that species tend to be either consistently present or consistently absent within types
+Values close to 0 indicate that species occurrences are unpredictable, with frequencies close to 0.5
+Higher ISAMIC values suggest a more effective typology system.
+
+The Area Under the Zeta diversity Curve [AUCζ, @jupkeEuropeanRiverTypologies2023] quantifies the rate at which the number of shared taxa decreases along an increasing number of sampling sites. 
+The zeta (ζ) diversity of degree $q$ represents the mean number of species shared across $q$ sites [@huiZetaDiversityConcept2014].
+$$\zeta_q = \mathbb{E}\left[\bigcap_{j=1}^q y_j\right]$$
+where $y_j$ represents the set of species in site $j$.
+For any typology system, we compute the ζ-diversity within-types $\zeta^w_q$ using sites from the same type
+and the ζ-diversity between-types $\zeta^b_q$ using sites from different types.
+As ζ-diversity declines monotonically with increasing $q$, we can compute the area under the decline curves to quantify the speed and magnitude of turnover. 
+The AUCζ for is calculated as:
+$$AUC\zeta^w = \frac{1}{\zeta_1}\sum_{q=2}^{10} \frac{\zeta^w_i + \zeta^w_{i-1}}{2}$$
+$$AUC\zeta^b = \frac{1}{\zeta_1}\sum_{q=2}^{10} \frac{\zeta^b_i + \zeta^b_{i-1}}{2}$$
+We divide by $\zeta_1$ to obtain results that are independent of species richness. 
+The effectiveness of a typology system can be quantified by the ratio:
+$$\Delta AUC\zeta = \frac{AUC\zeta^w}{AUC\zeta^b}$$
+where values > 1 indicate lower turnover within types than between types.
+
+Lastly, we will compute one evaluation metric for a fuzzy classification. 
+Using gradual instead of binary type-membership, such classifications offer advantages for capturing ecological gradients  but are less commonly used. 
+The evaluation criteria we have discussed thus far assume crisp classifications and cannot be applied to fuzzy classifications. 
+Therefore, we will use two approaches specific to fuzzy classifications. 
+To our knowledge, these approaches have not been previously applied to bio validation of typology systems. 
+
+Our first approach involves fitting binomial multiresponse GLMs [@wangMvabundPackageModelbased2012] using the presence-absence data as response variables and the type-membership as explanatory variables. 
+This method shows how much of the variation in biota can be explained by the type-memberships. 
+We will quantify the model fit with the weighted average if explained deviance across all taxa.
+The deviances are weighted by the total number of taxon occurrences to prevent an undue influence of rare species. 
+The best possible score is a 1, indicating the type-membership is able to perfectly predict the occurrence probability of every species. 
+The worst score is 0, indicating the type-membership is independent of occurrence probabilities of all taxa. 
+
+Our second approach consist of comparing the similarity of two communities in biological space (i.e., their Jaccard distance based on community composition) with the distance in type-membership space, i.e., the Jensen-Shannon distance between their type-membership vectors. This comparison will be achieved with a Mantel test [@mantelDetectionDiseaseClustering1967] which computes the Pearson correlation between values in the distance matrices. 

@@ -1,0 +1,60 @@
+# Introduction 
+
+A tool in the management and research of ecosystems is to divide them into different types: river types, ecoregions, habitat types. 
+These examples serve to highlight the breadth of systems, spatial scales, and methods employed in this exercise. 
+These classifications can be useful for several distinct reasons. 
+<!-- Why are they useful -->
+They are a easy to use representation of the environmental context and might be considered as a latent, discrete gradient capturing the relevant environmental variables like their continuous counterpart, the ordination axis. 
+This environmental context can then be used to calibrate indicator metrics in biomonitoring [@szoszkiewiczMacrophyteIndexRivers2019]. 
+This is necessary as responses of biota to natural gradients [@bogota-gregoryGeomorphologicalHabitatType2023; @alahuhtaComparativeAnalysisReveals2017] and anthropocentric stressors [@denisonIntegratingRegionalFrameworks2021; @bevanRegionalBiomesOutperform2024;@pharaohPotentialDriversChanging2024] can differ between ecosystem types. 
+Such context or region-dependence has also been observed for trait-environment relationships [@yangWhyFunctionalTraits2018; @burnerTraitsMediateNiches2021; @koppJointSpeciesDistribution2023].
+They are also used as a controlling variable when planning experiments.
+When we try to minimize the impact certain environmental features, we can focus our sampling to a small selection of types (ref).
+We often hold different protection goals for different regions of habitats - a typology can then facilitating the selection, combination, or prioritization of management actions. 
+Lastly, they can also serve as a proxy for species ranges, where detailed information is lacking [@pinkertPotentialEcoregionalRange2023].
+
+<!-- Assumption --> 
+Typologies are models. Rather than describing nature, they superimpose their simplified view. A view that can be usefull if they meet the assumption that ecological communities within types are more similar to oneanother than to communities from other types. Generally this property is known as external cluster validity (insert short description), and in this context more specifically as biological validity (ref). With the advent of typology systems in different management schemes (Clean Water act, Water Framework Directive, more examples - also check CWA again.) interest in biovalidation grew and noumerous systems have to date been evaluated against noumerous (new word) taxonomic groups.
+
+Provide some examples. 
+
+<!-- Issues with studies up to this point --> 
+The available studies on the biovalidity of typology systems suffer from two flaws.
+First, there is contention which method should be used to determine biovalidity. 
+Different studies use different methods, which reduces comparability among them.
+It remains difficult to compare the biovalidity of typology systems across taxa and places, because we lack an empirically grounded notion of how biovalid a biovalid typology systems is.
+In lieu, three practices have taken hold. 
+Biovalidity is judged against unrealistic heuristics without ecological foundations, against statistical significance, or ordination diagrams [e.g., @khanalBenthicMacroinvertebrateAssemblages2025].
+<!-- problem with 1 --> 
+<!-- problem with 2 --> 
+Dichotomous decisions based on *p*-values suffer from a slew of issues. 
+Here, we wish to highlight X issues relevent whithin this context. 
+P-value depend on effect size and sample size. 
+Large scale ecological studies typically have a large number of sampling sites, thus rendering even miniscule effect sizes statistically significant. 
+Other ways to dress these issues have been proposed but will not be considered here [@crouchFalseEvidenceRate2025; @maierJustifyYourAlpha2022; @wulffHowWhyAlpha2023]
+<!-- problem with 3 --> 
+Visual assessments of ordination diagrams are not standardized and ad-hoc in nature. More crucially, ordination diagrams only show the variation captured by two or three latent variables and rarely incorporate uncertainty estimates. 
+Model-based ordinations allow the visualization of uncertainty of 95% Credible Intervals [@hoeghEvaluatingPresentingUncertainty2020] or prediction errors [@nikuGllvmFastAnalysis2019] often severely altering apparent patterns. 
+Illustrative examples are provided here(). 
+
+Effect size heuristics exist for some commonly used metrics but not all. <!-- provide examples --> 
+They are not specifically tailored to ecological systems but describe the mathematical properties of the metrics. 
+<!-- Provide example here --> 
+The fact that these heuristics are disconnected from ecological realities is evident as they are context-, scale-, and taxon-independent.
+All three factors should influence the result. <!-- refereneces -->  
+ 
+
+<!-- more references here --> 
+A move toward *a priori* determined relevant effect sizes seems fruitful [@popovicFourPrinciplesImproved2024].
+
+
+<!-- We aim to --> 
+We aim to provide a comprehensive set of benchmarks for different biovalidity metrics. 
+These benchmarks will cover different taxonomic groups and different spatial scales. 
+We will train a large number regression models on independent empirical data sets and use these models to simulate new data. 
+The simulated communities will be based on artificial typology systems along a gradient of low to high expected biovalidity, thus enabling us to map plausible ranges for different metrics, spatial scales, and taxa.
+
+
+
+
+
