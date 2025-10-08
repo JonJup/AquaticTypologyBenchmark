@@ -1,0 +1,82 @@
+# Supplementary Methods SX: Posterior Predictive Validation of HMSC Models --> 
+
+## Overview
+
+Posterior predictive checks assess whether models can reproduce key ecological patterns observed in empirical data [@gelmanPosteriorPredictiveAssessment1996]. 
+Rather than relying solely on aggregate fit statistics (e.g., AUC), we evaluated whether fitted HMSC models reproduced four fundamental community patterns: beta diversity structure, species co-occurrence, species-environment relationships, and prevalence distributions. 
+For each fitted model, we generated 150 simulated data sets by sampling from the posterior distribution of model parameters. 
+Specifically, we selected the last 50 samples samples from each MCMC chain.
+
+### Beta Diversity Structure
+
+We evaluated whether models reproduced the observed distribution of pairwise dissimilarities.
+For each data set (observed and simulated), we computed all pairwise community dissimilarities using Jaccard distance for occurrence data or Bray-Curtis distance for abundance data.
+We then compared the 5th, 25th, 50th, 75th, and 95th percentiles of their distributions. 
+
+For each quantile, we calculated the 95% envelope across the simulated data sets (i.e., the 2.5th and 97.5th percentiles of simulated quantile values). 
+Models were flagged if any observed quantile fell outside its corresponding envelope. 
+Additionally, we computed a standardized effect size for the median dissimilarity
+$$z = \dfrac{(median_{obs} - \bar{median_{sim}})}{sd(medain_{sim})}$$.
+This metric indicates whether the model systematically over- or under-estimates compositional turnover.
+
+### Species Co-occurrence Patterns
+
+Co-occurrence patterns reflect biotic interactions, shared environmental preferences, and assembly history [@gotelliNULLMODELANALYSIS2000]. 
+The C-score quantifies the prevalence of "checkerboard" patterns—species pairs that rarely co-occur at sites [@stoneCheckerboardScoreSpecies1990].
+
+For each data set, we calculated the C-score across all species pairs with $\ge 2$ occurrences. 
+For species $i$ and $j$, the checkerboard score is 
+$$C_{ij} = (r_{i} - S_{ij}) × (r_{j} - S_{ij})$$
+, where $r_i$ and $r_j$ are the number of sites each species occupies, and $S_ij$ is the number of sites where both occur. 
+The C-score is the mean of $C_{ij}$ across all species pairs. 
+Higher C-scores indicate more checkerboard patterns (potential competitive exclusion); lower scores suggest aggregation (positive associations).
+
+We calculated the C-score for observed data and each of the 150 simulated data sets, then computed the standardized effect size:
+$$z = \dfrac{C_{obs} - \bar{C_{sim}}}{sd(C_{sim})}$$
+Models were flagged if |z| > 2. 
+
+### Species-Environment Relationships
+
+Even if community-level predictions are adequate, individual species may show incorrect environmental responses. 
+We evaluated whether the ten most abundant species exhibited consistent environmental optima between observed and simulated 
+data.
+
+For each species $i$ and environmental variable $x$, we calculated the 
+abundance-weighted mean:
+c_he = Σ(a_ih × e_i) / Σ(a_ih)
+$$c_{ie} = \dfrac{\sum a_{ij} \times x_j}{\sum a_{ij}}$$
+
+where $a_{ij}$ is the abundance of species $i$ at site $j$, and $x_j$ is the value of environmental variable $x$ at site $j$.
+For presence-absence data, $a_{ij} \in \{0,1\}$. 
+This yields the "center of gravity" of each species along each environmental gradient.
+
+For each species-environment combination in the observed data, we calculated the corresponding optimum in each of the 150 simulated data sets. 
+We then computed the standardized effect size
+$$z_{ix} = \dfrac{c_{ix;obs} - \bar{c_{ix;sim}}}{sd(c_{ix;sim})} $$
+Individual relationships were flagged if $|z_{ix}|>2$. 
+We summarized model performance as the proportion of species-environment combinations flagged. 
+Models with >20% of relationships flagged were considered poorly calibrated.
+
+### Species Prevalence Distribution
+
+The prevalence distribution — how many sites each species occupies — reflects fundamental macroecological patterns [@gastonPatternProcessMacroecology2000]. 
+Most communities show right-skewed distributions with many rare species and few ubiquitous species. 
+Models that fail to reproduce this pattern may inadequately capture ecological ground truth.
+
+For each data set, we calculated prevalence for each species as the proportion of sites occupied. 
+We then summarized the prevalence distribution with five statistics: (1) number of rare species (prevalence < 0.05), (2) number of uncommon species (0.05 ≤ prevalence < 0.25), (3) number of common species (0.25 ≤ prevalence < 0.75), (4) number of ubiquitous species (prevalence ≥ 0.75), and (5) distribution skewness.
+
+For each statistic, we calculated standardized effect sizes comparing observed to simulated values. 
+Models were flagged if the number of rare species or ubiquitous species deviated substantially ($|z| > 2$) from simulated distributions. 
+
+### Decision Rules
+
+For each model, we tallied the number of flagged diagnostics (0-4). 
+Models with any flagged diagnostics were considered inadequate for generating communities.
+These models were excluded from benchmark derivation. 
+
+### Software Implementation
+
+All posterior predictive checks were implemented in R version [X.X.X]. Beta diversity calculations used the vegan package [2.7-1] [@oksanenVeganCommunityEcology2022]. C-scores were computed with custom functions adapted from EcoSimR [@gotelliEcoSimRNullModel2015].
+Posterior sampling from HMSC models used the predict() function from Hmsc [3.3-7] [@tikhonovHmscHierarchicalModel2022].
+Code for all diagnostics is available in the associated GitHub repository (https://github.com/JonJup/AquaticTypologyBenchmark).

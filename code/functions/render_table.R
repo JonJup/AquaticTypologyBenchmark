@@ -1,18 +1,34 @@
-# Render table 
+################################################################################
+# Script Name:        render_table.R
+# Description:        Custom function. Called from evaluate_typologies. 
+#                    takes output of evaluation functions and create harmonized table with relevant metadata. 
+#
+# Author:             Jonathan Jupke
+# Date Created:       2025-09-15
+# Last Modified:      2025-09-15
+#
+# R Version:          R 4.5.1
+# Required Packages:  data.table
+#
+# Notes:              Any notes or assumptions
+################################################################################
+
+if(!require(data.table)) library(data.table)
+
 render_table <- function(x, variable){
         x2  <- data.table(
-                        scheme_id             = i.ss$scheme_id,
-                        value                 = x, 
-                        #model                 = model_names[i],
-                        n_types               = i.file$number_of_clusters,
-                        metric                = variable, 
-                
-                        variables             = rep(i.file$number_of_variables, each = neval/max.q),
-                        contraction_points    = i.file$contraction_points,
-                        contraction_centroids = i.file$contraction_centroids,
-                        env_asw               = i.file$asw,
-                        importance            = rep(i.file$variable_importance, each = neval/max.q)
-                )
+                scheme_id             = i.ss$scheme_id,
+                value                 = x, 
+                #model                 = model_names[i],
+                n_types               = i.file$number_of_clusters,
+                metric                = variable, 
+                variables             = i.file$number_of_variables,
+                compactness           = i.file$contraction_points,
+                separation            = i.file$contraction_centroids,
+                env_asw               = i.file$asw,
+                importance            = i.file$variable_importance,
+                fuzzy_npe             = i.file$npe
+        )
         return(x2)
 }
 

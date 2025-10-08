@@ -12,31 +12,37 @@
 # groundhog.library(pkgs,'2024-11-20')
 # rm(pkgs)
 
+setwd(rstudioapi::getActiveProject())
+
+library(fs)
+library(magrittr)
+library(stringr)
+library(arrow)
+library(data.table)
+
 # load data -------------------------------------------------------------------------
-slope                   <- dir_ls("E://Arbeit/Data/river_network/hydrography90m/Elevation difference between focal cell and downstream cell/w_catchments/")
-lakes                   <- dir_ls("E://Arbeit/Data/river_network/hydroLAKES/w_catchment/")
-soil_oc                 <- dir_ls("E://Arbeit/Data/soil/new soil/oc_w_catchment/")
-soil_pH                 <- dir_ls("E://Arbeit/Data/soil/Europe soil ph/w_catchments/")
-floodpl                 <- dir_ls("E://Arbeit/Data/river_network/flood_area/w_catchment//")
-streamp                 <- dir_ls("E://Arbeit/Data/river_network/hydrography90m/stream power index/w_catchment/")
-geology                 <- dir_ls("E://Arbeit/Data/LULC/IHME1500_v11/w_catchments/")
-glacier                 <- dir_ls("E://Arbeit/Data/LULC/randolph glacier inventory/w_catchments/")
-bioclim                 <- dir_ls("E://Arbeit/Data/climate/bioclim_chelsa/v2.1/w_catchments/")
-erosion                 <- dir_ls("E://Arbeit/Data/misc/Gloreda/w_catchements/")
-roughness               <- dir_ls("E://Arbeit/Data/DEM/DTM_Europe/roughness_w_catchment/")
-elevation               <- dir_ls("E://Arbeit/Data/DEM/DTM_Europe/w_catchment/")
-snowdepth               <- dir_ls("E://Arbeit/Data/CERRA/w_catchments/")
-discharge               <- dir_ls("E://Arbeit/Data/river_network/discharge copernicus/w_catchments/")
-groundwater             <- dir_ls("E://Arbeit/Data/river_network/BasinATLAS_Data_v10/groundwater_area_w_catchment/")
-upstream_area           <- dir_ls("E://Arbeit/Data/river_network/BasinATLAS_Data_v10/upstream_area_w_catchment/")
-saturated_water_content <- dir_ls("E://Arbeit/Data/river_network/Maps of indicators of soil hydraulic properties for Europe/w_catchments/")
-valley_bottom_flatness  <- dir_ls("E://Arbeit/Data/river_network/valley bottom flattness/w_catchments/")
+slope                   <- dir_ls("D://Arbeit/data/river_network/hydrography90m/processedData/slope_w_catchments/")
+lakes                   <- dir_ls("D://Arbeit/data/river_network/hydroLAKES/processedData/fractionLake_w_catchment//")
+soil_oc                 <- dir_ls("D://Arbeit/data/soil/new soil/processedData/oc_w_catchment//")
+soil_pH                 <- dir_ls("D://Arbeit/data/soil/soil_ph_europe/processedData/w_catchments/")
+floodpl                 <- dir_ls("D://Arbeit/data/river_network/flood_area/processedData/w_catchment/")
+streamp                 <- dir_ls("D://Arbeit/data/river_network/hydrography90m/processedData/spi_w_catchment//")
+geology                 <- dir_ls("D://Arbeit/data/LULC/IHME1500_v11/w_catchments/")
+glacier                 <- dir_ls("D://Arbeit/data/LULC/randolph glacier inventory/w_catchments/")
+bioclim                 <- dir_ls("D://Arbeit/data/climate/bioclim_chelsa/processedData/w_catchments/")
+erosion                 <- dir_ls("D://Arbeit/data/misc/Gloreda/processedData/w_catchements/")
+roughness               <- dir_ls("D://Arbeit/data/DEM/DTM_Europe/processedData/roughness_w_catchment/")
+elevation               <- dir_ls("D://Arbeit/data/DEM/DTM_Europe/processedData/elevation_w_catchment/")
+snowdepth               <- dir_ls("D://Arbeit/data/CERRA/processedData/snow_depth_w_catchments/")
+discharge               <- dir_ls("D://Arbeit/data/river_network/discharge copernicus/processedData/w_catchments//")
+groundwater             <- dir_ls("D://Arbeit/data/river_network/BasinATLAS_Data_v10/processedData/groundwater_area_w_catchment//")
+upstream_area           <- dir_ls("D://Arbeit/data/river_network/BasinATLAS_Data_v10/processedData/upstream_area_w_catchment/")
+saturated_water_content <- dir_ls("D://Arbeit/data/river_network/soilHydraulicPropertiesEurope/processedData/soiHydraulicaProperties_w_catchments/")
+valley_bottom_flatness  <- dir_ls("D://Arbeit/data/river_network/valley_bottom_flattness/processedData/valleyBottomFlattness_w_catchments/")
 
-dropv <- readRDS("data/dropv_catchments.rds")
-
-
+#dropv <- readRDS("data/dropv_catchments.rds")
 all.var <- list(
-        slope,
+                slope,
                 lakes,
                 soil_oc,
                 soil_pH,
@@ -57,7 +63,7 @@ all.var <- list(
                 )
 
 
-# remove catchments I dont need 
+# custom function to remove catchments
 rmv <- function(x, y){
         if (any(str_detect(x,y))){
                 x <- x[!str_detect(x,y)]
@@ -65,6 +71,7 @@ rmv <- function(x, y){
         x
 }
 
+# remove whole areas not considered in the project
 all.var %<>% lapply(rmv, "Hondo")
 all.var %<>% lapply(rmv, "Iceland")
 all(sapply(all.var, length) == 30)
@@ -80,7 +87,8 @@ clean_name_list <- all.var[[1]] %>%
         str_remove("\\.parquet")
 
 
-# prepare data ----------------------------------------------------------------------
+
+# Loop over catchments 
 for (i in 1:length(all.var[[1]])) {
         i.catchment_name <-
                 all.var[[1]][i] %>%
@@ -161,7 +169,7 @@ for (i in 1:length(all.var[[1]])) {
         #- https://stackoverflow.com/questions/13273833/merging-multiple-data-tables
         i.f.all2 = Reduce(function(...)
                 merge(..., by = "ID", all = TRUE), i.f.all)
-        i.f.all2 <- i.f.all2[!ID %in% dropv]
+        i.f.all2[, c("VBM_min", "spi_min") := NULL]
         write_parquet(
                 i.f.all2,
                 paste0(

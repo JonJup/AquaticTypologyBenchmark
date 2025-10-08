@@ -1,39 +1,78 @@
+################################################################################
+# Script Name:        add_euHydro_to_biota.R
+# Description:        Short description of the script
+#
+# Author:             Jonathan Jupke
+# Date Created:       2025-09-18
+# Last Modified:      2025-09-18
+#
+# R Version:          R 4.5.1
+# Required Packages:  package1, package2
+#
+# Notes:              Any notes or assumptions
+################################################################################
+
+# setup -------------------------------------------------------------------
+
+setwd(rstudioapi::getActiveProject())
+
+library(sf)
+library(sfarrow)
+library(dplyr)
+library(data.table)
+
 # load data -------------------------------------------------------------------------
 
-files      <- dir_ls("data/biota", regexp = "00_")
-bio.names  <- sapply(files, function (x) str_remove(x, "data/biota/00_combined_")) %>%  sapply(function(x) str_remove(x, ".rds"))
-vector_data <- dir_ls("D:/Arbeit/data/river_network/eu_hydro_dem/parquet/")
+# files      <- list.files("data/biota", regexp = "00_")
+files <- c(
+        "E://data/biota/diatom data/00_combine_data/PULSE/pulse_diatoms.rds",
+        "E://data/biota/fish data/00_combine_data/PULSE/pulse_fish.rds",
+        "E://data/biota/invertebrate data/00_combine_data/PULSE/pulse_invertebrates.rds",
+        "E://data/biota/macrophyte data/00_combine_data/PULSE/pulse_macrophytes.rds"
+)
+# More than one slash after D: causes an error
+vector_data <- list.files("E:/data/hydroDEM_parquet/", full.names = T)
+bio.names   <- c("diatoms", "fish", "invertebrates", "macrophytes")
 
-for (i.biota in bio.names){
-        print(paste("STARING", i.biota))
-        biota       <- readRDS(paste0("data/biota/00_combined_", i.biota,".rds"))
+for (i in 1:4){
+        #if (i == 1) next()
+        print(paste("STARING", bio.names[i]))
+        biota       <- readRDS(files[i])
         
         # prepare sites  ----------------------------------------------------------
-        sites <- unique(biota, by = c("comb_site_id")) %>% 
-                filter(!is.na(x.coord)) %>%  
-                st_as_sf(coords = c("x.coord", "y.coord"), crs = 3035) %>% 
-                st_transform(4326)
+        sites <- unique(biota, by = c("siteID"))
+        sites <- sites[!is.na(sites$x.coord), ]
+        sites <- st_as_sf(sites, coords = c("x.coord", "y.coord"), crs = 3035)
+        sites <- st_transform(sites, 4326)
+        
         out.ls <- vector(mode = "list", length = length(vector_data))
-        for (i in 1:length(vector_data)){
-                print(i)
-                i.vec  <- st_read_parquet(vector_data[i])
-                if (i == 13) i.vec <- st_make_valid(i.vec)
+        
+        for (ii in 1:length(vector_data)){
+                print(ii)
+                i.vec  <- st_read_parquet(vector_data[ii])
+                i.vec  <- st_make_valid(i.vec)
                 i.join <- st_join(sites, i.vec)
                 
-                out.ls[[i]] <- 
-                        i.join %>% 
-                        filter(!is.na(ID)) %>%
-                        select(c("comb_site_id", "ID")) %>%
-                        st_drop_geometry()
+                i.join <- i.join[!is.na(i.join$ID), ]
+                i.join <- i.join[, c("siteID", "ID")]
+                i.join <- st_drop_geometry(i.join)
+                i.join <- unique(i.join, by = "siteID")
                 
-                
-        }#;beepr::beep()
+                out.ls[[ii]] <- i.join
+                rm(i.vec, i.join, ii)
+        }
         
         out.ls <- bind_rows(out.ls)
-        sites  <- left_join(sites, out.ls, by = c("comb_site_id"))
-        sites  <- select(sites, comb_site_id, ID) %>% st_drop_geometry %>% setDT
-        biota   <- sites[biota, on = "comb_site_id"]
+        sites  <- left_join(sites, out.ls, by = c("siteID"))
+        sites  <- select(sites, siteID, ID) %>% st_drop_geometry %>% setDT
+        sites <- unique(sites, by = "siteID")
+        biota  <- sites[biota, on = "siteID"]
         
-        saveRDS(biota, paste0("data/biota/01_", i.biota,"_w_catchment_id.rds"))
+        saveRDS(biota, paste0("data/biota/01_", bio.names[i],"_w_catchment_id.rds"))
         rm(out.ls, biota, sites)
-}
+        
+}; rm(i); gc()
+        
+x <- readRDS("data/biota/01_macrophytes_w_catchment_id.rds")
+y <- readRDS("data/biota/02_fish_w_environment.rds")
+y

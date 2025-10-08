@@ -5,21 +5,31 @@ library(Hmsc)
 library(data.table)
 models <- list.files("data/fitted_hmsc_models/", full.names = T)
 
+
+
+
 for (i in seq_along(models)){
         #if (i < 8) next()
         print(i)
         i.models    <- readRDS(models[i])
-        i.preds     <- computePredictedValues(i.models)
-        i.MF        <- evaluateModelFit(hM = i.models, 
+        i.preds     <- computePredictedValues(i.models$model)
+        i.MF        <- evaluateModelFit(hM = i.models$model, 
                                         predY = i.preds)
+        if("C.SR2" %in% names(i.MF)){
+                R2 <- i.MF$C.SR2
+        } else {
+                R2 <- i.MF$TjurR2
+        }
+        # i.AUC <- i.MF[["AUC"]]
+        # i.AUC <- median(i.AUC, na.rm = T)
         # how many spatial predictors are there?
         i.n.spatial <- sum(grepl(x = colnames(i.models$XData), pattern = "AEM|MEM"))
         
         if (i.n.spatial == 0){
                 i.VP    <- computeVariancePartitioning(
-                        i.models,
+                        i.models$model,
                         group = c(rep(
-                                1, ncol(i.models$XData) - i.n.spatial
+                                1, ncol(i.models$model$XData) - i.n.spatial
                         )),
                         groupnames = c("env")
                 )  
@@ -27,20 +37,20 @@ for (i in seq_along(models)){
                         taxon = rep(colnames(i.VP$vals), each = 2),
                         driver = rep(c("env",  "bio"), times = ncol(i.VP$vals)),
                         value  = c(i.VP$vals),
-                        r2     = rep(i.MF$TjurR2, each = 2)
+                        r2     = rep(R2, each = 2)
                 )
                 i.VP22 <- data.table(
                         taxon = colnames(i.VP$vals),
                         driver = "space",
                         value  = 0,
-                        r2     = i.MF$TjurR2
+                        r2     =R2
                 )
                 i.VP2 <- rbindlist(list(i.VP2, i.VP22))
         } else {
                 i.VP    <- computeVariancePartitioning(
-                        i.models,
+                        O.models$model,
                         group = c(rep(
-                                1, ncol(i.models$XData) - i.n.spatial
+                                1, ncol(O.models$model$XData) - i.n.spatial
                         ), rep(2, i.n.spatial)),
                         groupnames = c("env", "space")
                 )  
@@ -48,7 +58,7 @@ for (i in seq_along(models)){
                         taxon = rep(colnames(i.VP$vals), each = 3),
                         driver = rep(c("env", "space", "bio"), times = ncol(i.VP$vals)),
                         value  = c(i.VP$vals),
-                        r2     = rep(i.MF$TjurR2, each = 3)
+                        r2     = rep(R2, each = 3)
                 )
         }
         
@@ -59,29 +69,26 @@ for (i in seq_along(models)){
                 taxon = colnames(i.VP$vals),
                 driver = "stochastic",
                 value = 0,
-                r2 = i.MF$TjurR2
+                r2 = R2
         )
         i.VP3[r2 < 0, r2 := 0]
         i.VP3[, value := 1 - r2]
         i.VP3[, scaled_values := 1 - r2]
         i.VP4 <- rbindlist(list(i.VP2, i.VP3))
         i.VP4$run <- i
-        #i.VP4$psrf_mean <- rep(i.means, each = 4)
-        #i.VP4$psrf_max  <- rep(i.maxes, each = 4)
         
         #- new VP to determine relative predictor importance
-        i.VP5    <- computeVariancePartitioning(i.models)
-        
+        i.VP5    <- computeVariancePartitioning(i.models$model)
         i.VP6 <- rowSums(i.VP5$vals)
         #- drop morans eigenvectors
         i.VP6 <- i.VP6[!grepl(x = names(i.VP6), pattern = "MEM|AEM|Random")]
         i.VP6 <- i.VP6 / sum(i.VP6)
         
         i.save.name <- sub(x = models[i], pattern = "fitted_hmsc_models", replacement = "variation_partitioning")
-        saveRDS(list(VP = i.VP4, importance = i.VP6), i.save.name)
+        saveRDS(list(VP = i.VP4, importance = i.VP6, MF = i.MF), i.save.name)
         rm(list = ls()[grepl(pattern = "^i\\.", x = ls())])
 }
-
+    
 
 # old code  ---------------------------------------------------------------
 

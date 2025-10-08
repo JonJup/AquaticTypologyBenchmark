@@ -1,5 +1,5 @@
 ---
-title: "test"
+title: "Context-Dependent Benchmarks for Ecological Typology Biovalidity Assessment"
 author: Jonathan F. Jupke
 bibliography: "C:/Users/jonjupke/Zotero/MyLibrary.bib"
 csl: ecotoxicology.csl
@@ -16,6 +16,7 @@ library(data.table)
 library(flextable)
 library(bookdown)
 suppressPackageStartupMessages(library(dplyr)) 
+ss <- readRDS("../summary_statistics.rds")
 ```
 
 ```{r index_table_env_create, echo=FALSE}
@@ -35,8 +36,10 @@ dat <- tibble(
     "Maximum annual discharge",
     "Snow Cover",
     "Segment Sinuosity",
-    "Valley Bottom Flatness Index",
-    "Stream Power Index",
+    "Mean Valley Bottom Flatness Index",
+    "Maximum Valley Bottom Flatness Index",
+    "Mean Stream Power Index",
+    "Maximum Stream Power Index",
     "Lake Index",
     "Elevation",
     "Groundwater Table Depth",
@@ -68,6 +71,8 @@ dat <- tibble(
     "HydroATLAS",
     "EU Hydro",
     "EcoDataCube",
+    "EcoDataCube",
+    "Hydrography90m",
     "Hydrography90m",
     "HydroLAKES",
     "Hydrography90m",
@@ -95,6 +100,8 @@ dat <- tibble(
     "Linke et al (2019)",
     "EEA (2019)",
     "Witjes et al. (2023)",
+    "Witjes et al. (2023)",
+    "Amatulli et al. (2022)",
     "Amatulli et al. (2022)",
     "Messager et al. (2016)",
     "Amatulli et al. (2022)",
@@ -128,18 +135,23 @@ ft <- ft %>%
   bold(part = "header")
 ```
 
-
 ```{r child='01_abstract.rmd', eval=T}
 ```
+
 ```{r child='02_introduction.rmd', eval=T}
 ```
+
 ```{r child='03_methods.rmd', eval=T}
 ```
+
 ```{r child='supplementary_5_metrics.rmd', eval=T}
 ```
 
+```{r child='supplementary_ppc.Rmd', eval=T}
+```
 
-
+```{r child='supplement_notation.Rmd', eval=T}
+```
 
 # Acknowledgements
 

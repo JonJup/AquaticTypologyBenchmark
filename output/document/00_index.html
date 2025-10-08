@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Jonathan F. Jupke">
+
+<title>Context-Dependent Benchmarks for Ecological Typology Biovalidity Assessment</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="00_index_files/libs/clipboard/clipboard.min.js"></script>
+<script src="00_index_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="00_index_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="00_index_files/libs/quarto-html/popper.min.js"></script>
+<script src="00_index_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="00_index_files/libs/quarto-html/anchor.min.js"></script>
+<link href="00_index_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="00_index_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="00_index_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="00_index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="00_index_files/libs/bootstrap/bootstrap-bb462d781dde1847d9e3ccf7736099dd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="00_index_files/libs/tabwid-1.1.3/tabwid.css" rel="stylesheet">
+
+<script src="00_index_files/libs/tabwid-1.1.3/tabwid.js"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Context-Dependent Benchmarks for Ecological Typology Biovalidity Assessment</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Jonathan F. Jupke </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- 
+
+The resulting benchmarks are context-dependent, providing expected metric values conditional on taxonomic group, spatial scale, sample size, and the ecological processes structuring communities
+
+-->
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<!-- general comment from claude red team on current state: 
+
+ISSUE #23: Missing Introduction Arc
+
+Current state: Introduction jumps directly into the problem without establishing:
+
+Why typologies matter (ecological theory perspective)
+Historical context (when did biovalidity become a concern?)
+Stakes (what decisions depend on this?)
+
+
+Risk/Impact: MEDIUM - Readers outside your immediate subfield won't understand significance
+Recommendation: Restructure introduction as:
+
+Typologies in ecology (broad importance)
+The biovalidity question (why it arose)
+Current assessment problems (your contribution)
+Your solution
+
+-->
+<!-- add somewhere 
+
+Crucially, these benchmarks will be context-dependent: derived from regression models that account for taxonomic group, spatial scale, sample size, taxonomic resolution, and the ecological characteristics of each system (e.g., the relative importance of environmental filtering vs. spatial processes). Rather than proposing universal thresholds divorced from ecological reality, our approach recognizes that expected biovalidity depends fundamentally on system properties.
+
+
+-->
+<p>A tool in the management and research of ecosystems is to divide them into different types: river types, ecoregions, habitat types. These examples serve to highlight the breadth of systems, spatial scales, and methods employed in this exercise. These classifications can be useful for several distinct reasons. <!-- Why are they useful --> They are a easy to use representation of the environmental context and might be considered as a latent, discrete gradient capturing the relevant environmental variables like their continuous counterpart, the ordination axis. This environmental context can then be used to calibrate indicator metrics in biomonitoring <span class="citation" data-cites="szoszkiewiczMacrophyteIndexRivers2019">(<a href="#ref-szoszkiewiczMacrophyteIndexRivers2019" role="doc-biblioref">Szoszkiewicz et al. 2019</a>)</span>. This is necessary as responses of biota to natural gradients <span class="citation" data-cites="bogota-gregoryGeomorphologicalHabitatType2023 alahuhtaComparativeAnalysisReveals2017">(<a href="#ref-alahuhtaComparativeAnalysisReveals2017" role="doc-biblioref">Alahuhta et al. 2017</a>; <a href="#ref-bogota-gregoryGeomorphologicalHabitatType2023" role="doc-biblioref">Bogotá-Gregory et al. 2023</a>)</span> and anthropocentric stressors <span class="citation" data-cites="denisonIntegratingRegionalFrameworks2021 bevanRegionalBiomesOutperform2024 pharaohPotentialDriversChanging2024">(<a href="#ref-denisonIntegratingRegionalFrameworks2021" role="doc-biblioref">Denison et al. 2021</a>; <a href="#ref-pharaohPotentialDriversChanging2024" role="doc-biblioref">Pharaoh et al. 2024</a>; <a href="#ref-bevanRegionalBiomesOutperform2024" role="doc-biblioref">Bevan et al. 2024</a>)</span> can differ between ecosystem types. Such context or region-dependence has also been observed for trait-environment relationships <span class="citation" data-cites="yangWhyFunctionalTraits2018 burnerTraitsMediateNiches2021 koppJointSpeciesDistribution2023">(<a href="#ref-yangWhyFunctionalTraits2018" role="doc-biblioref">Yang et al. 2018</a>; <a href="#ref-burnerTraitsMediateNiches2021" role="doc-biblioref">Burner et al. 2021</a>; <a href="#ref-koppJointSpeciesDistribution2023" role="doc-biblioref">Kopp et al. 2023</a>)</span>. They are also used as a controlling variable when planning experiments. When we try to minimize the impact certain environmental features, we can focus our sampling to a small selection of types (ref). We often hold different protection goals for different regions of habitats - a typology can then facilitating the selection, combination, or prioritization of management actions. Lastly, they can also serve as a proxy for species ranges, where detailed information is lacking <span class="citation" data-cites="pinkertPotentialEcoregionalRange2023">(<a href="#ref-pinkertPotentialEcoregionalRange2023" role="doc-biblioref">Pinkert et al. 2023</a>)</span>.</p>
+<!-- Assumption -->
+<p>Typologies are models. Rather than describing nature, they superimpose their simplified view. A view that can be usefull if they meet the assumption that ecological communities within types are more similar to oneanother than to communities from other types. Generally this property is known as external cluster validity (insert short description), and in this context more specifically as biological validity (ref). With the advent of typology systems in different management schemes (Clean Water act, Water Framework Directive, more examples - also check CWA again.) interest in biovalidation grew and noumerous systems have to date been evaluated against noumerous (new word) taxonomic groups.</p>
+<p>Provide some examples.</p>
+<!-- Issues with studies up to this point -->
+<p>The available studies on the biovalidity of typology systems suffer from two limitations. First, there is contention which method should be used to determine biovalidity. Different studies use different methods, which reduces comparability among them. It remains difficult to compare the biovalidity of typology systems across taxa and places, because we lack an empirically grounded notion of how biovalid a biovalid typology systems is. In lieu, three practices have taken hold. Biovalidity is judged against unrealistic heuristics without ecological foundations, against statistical significance, or ordination diagrams <span class="citation" data-cites="khanalBenthicMacroinvertebrateAssemblages2025">(e.g., <a href="#ref-khanalBenthicMacroinvertebrateAssemblages2025" role="doc-biblioref">Khanal et al. 2025</a>)</span>. <!-- problem with 1 --> <!-- problem with 2 --> Dichotomous decisions based on <em>p</em>-values suffer from a slew of issues. Here, we wish to highlight X issues relevent whithin this context. P-value depend on effect size and sample size. Large scale ecological studies typically have a large number of sampling sites, thus rendering even miniscule effect sizes statistically significant. Other ways to dress these issues have been proposed but will not be considered here <span class="citation" data-cites="crouchFalseEvidenceRate2025 maierJustifyYourAlpha2022 wulffHowWhyAlpha2023">(<a href="#ref-maierJustifyYourAlpha2022" role="doc-biblioref">Maier and Lakens 2022</a>; <a href="#ref-wulffHowWhyAlpha2023" role="doc-biblioref">Wulff and Taylor 2023</a>; <a href="#ref-crouchFalseEvidenceRate2025" role="doc-biblioref">Crouch 2025</a>)</span> <!-- problem with 3 --> Visual assessments of ordination diagrams are not standardized and ad-hoc in nature. More crucially, ordination diagrams only show the variation captured by two or three latent variables and rarely incorporate uncertainty estimates. Model-based ordinations allow the visualization of uncertainty of 95% Credible Intervals <span class="citation" data-cites="hoeghEvaluatingPresentingUncertainty2020">(<a href="#ref-hoeghEvaluatingPresentingUncertainty2020" role="doc-biblioref">Hoegh and Roberts 2020</a>)</span> or prediction errors <span class="citation" data-cites="nikuGllvmFastAnalysis2019">(<a href="#ref-nikuGllvmFastAnalysis2019" role="doc-biblioref">Niku et al. 2019</a>)</span> often severely altering apparent patterns. Illustrative examples are provided here().</p>
+<p>Effect size heuristics exist for some commonly used metrics but not all. <!-- provide examples --> They are not specifically tailored to ecological systems but describe the mathematical properties of the metrics. <!-- Provide example here --> The fact that these heuristics are disconnected from ecological realities is evident as they are context-, scale-, and taxon-independent. All three factors should influence the result. <!-- refereneces --></p>
+<!-- more references here -->
+<p>A move toward <em>a priori</em> determined relevant effect sizes seems fruitful <span class="citation" data-cites="popovicFourPrinciplesImproved2024">(<a href="#ref-popovicFourPrinciplesImproved2024" role="doc-biblioref">Popovic et al. 2024</a>)</span>.</p>
+<!-- We aim to -->
+<p>We aim to provide a comprehensive set of benchmarks for different biovalidity metrics. These benchmarks will cover different taxonomic groups and different spatial scales. We will train a large number regression models on independent empirical data sets and use these models to simulate new data. The simulated communities will be based on artificial typology systems along a gradient of low to high expected biovalidity, thus enabling us to map plausible ranges for different metrics, spatial scales, and taxa.</p>
+</section>
+<section id="methods" class="level1">
+<h1>Methods</h1>
+<p>Add short intro.</p>
+<!-- Overview figure --->
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../figures/method-flowchart.svg" class="img-fluid figure-img"></p>
+<figcaption>placeholder</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<!-- provenance of data and overview-->
+<p>We have compiled occurrence and abundance data sets of diatoms, aquatic macroinvertebrates, fish, and aquatic macropyhtes (Tables S1-S4, Figure @ref(fig:mapofsampes), Box A Figure @ref(fig:flowchart)). These data sets range from few samples (19 samples) to many (59044 samples), from moments in time (16 days) to long-term time series (more than 48 years). Most originate form national or federal monitoring campaigns for the Water Framework Directive, though not all. Details on the sampling procedures for every data set are provided in the aforementioned tables. Despite the similar sampling approaches across most data sets, we analyzed each data set separately to minimize potential bias through variations in sampling. We followed two approaches to establish benchmarks for a selection of evaluation metrics. First, we computed a set of evaluation metrics for each of these data sets using a k-means classification of their environments and a selection of pan-European or global typology systems. Second, we greatly expand the number of analyzed typology systems by using simulated occurrence and abundance data sets. These communities were simulated from joint species distribution models that were previously fit on the empirical data sets. We will slightly alter the environmental conditions of these empirical data sets to either improve or diminish the expected performance of typology systems. Evaluating the congruence between simulated data sets and simulated typology systems over many data sets provides us with ecologically plausible benchmarks under a wide variety of circumstances.</p>
+<!-- map of sampling locatios -->
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../figures/map_all.png" class="img-fluid figure-img" width="2008"></p>
+<figcaption>Spatial distribution sampling sites across Europe.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="data-preparation" class="level2">
+<h2 class="anchored" data-anchor-id="data-preparation">Data preparation</h2>
+</section>
+<section id="data-preparation-1" class="level2">
+<h2 class="anchored" data-anchor-id="data-preparation-1">2.1 Data preparation</h2>
+<p>For both approaches, within each data set <span class="math inline">\(D\)</span>, we performed separate analyses for each year. For each year, we further restricted the data to the three consecutive months with the most samples <span class="math inline">\(D_{i}\)</span>, lessening the impact of long-term and seasonal trends. The samples from each <span class="math inline">\(D_{i}\)</span> will be distributed between clusters later in the analysis and we wanted to prevent very small clusters (&lt; 10 samples) from producing extreme results. Since we compare different numbers of clusters for each <span class="math inline">\(D_{i}\)</span>, we require a minimum sample size of <span class="math inline">\(N\left( D_{ij} \right) \geq 50\)</span> to ensure adequate statistical power. Years with <span class="math inline">\(N\left( D_{i} \right) &lt; 50\)</span> are excluded from the evaluation of data set <span class="math inline">\(D\)</span>.</p>
+<p>For data sets meeting the minimum threshold, we created subsets using a logarithmic sampling strategy. We generated subsets <span class="math inline">\(D_{ij}\)</span> using a geometric sequence with initial value <span class="math inline">\(N_{min} = 50\)</span> and multiplier <span class="math inline">\(r = 1.5\)</span>:</p>
+<p><span class="math display">\[N_{k} = N_{min} \times r^{k-1}, \quad k = 1, 2, 3, ...\]</span></p>
+<p>Each computed value was rounded to the nearest integer, and duplicates after rounding were removed. We retained only subset sizes <span class="math inline">\(N_{k} \leq N\left( D_{i} \right)\)</span>, and always included the complete data set <span class="math inline">\(D_{i}\)</span> as the final subset if not already present in the sequence.</p>
+<p>For example, with <span class="math inline">\(N\left( D_{i} \right) = 564\)</span>, this strategy yields seven subsets: <span class="math inline">\(D_{i1}\)</span> with 50 samples, <span class="math inline">\(D_{i2}\)</span> with 75, <span class="math inline">\(D_{i3}\)</span> with 113, <span class="math inline">\(D_{i4}\)</span> with 169, <span class="math inline">\(D_{i5}\)</span> with 254, <span class="math inline">\(D_{i6}\)</span> with 381, and <span class="math inline">\(D_{i7}\)</span> with 564 samples. If abundance data were available, we conducted all analyses on both abundance and occurrence data. To maintain computational feasibility, if the number of subsets <span class="math inline">\(j\)</span> exceeded 15, we retained the 15 largest subsets, ensuring the complete data set was always included.</p>
+<p>For each <span class="math inline">\(D_{ij}\)</span>, we determined the spatial scale (minimum, median, and maximum spatial distance between sampling locations), position (median, minimum and maximum latitude and longitude), and the taxonomic resolution as fraction of taxa identified to species, genus, family, or higher level.</p>
+<!-- OLD TEXT 
+<!-- subsampling 
+For both approaches, within each data set $D_i$, we performed separate analyses for each year. 
+For each year, we further restricted the data to the three consecutive months with the most samples $D_{ij}$, lessening the impact of long-term and seasonal trends. 
+<!-- TODO Reference for small cluster -> extreme results ? 
+The samples from each $D_{ij}$ will be distributed between clusters later in the analysis and we wanted to prevent very small clusters (< 10 samples) from producing extreme results. 
+Since we compare different numbers of clusters for each $D_{ij}$, we require a minimum sample size of $N(D_{ij}) \ge 50$ to ensure adequate statistical power. 
+Years with $N(D_{ij}) < 50$ are excluded from the evaluation of data set $D_i$.
+
+For data sets meeting the minimum threshold, we created subsets as follows:     
+- If $50 \le N(D_{ij}) < 100$, we use the complete data set once without subsetting    
+- If $N(D_{ij}) \ge 100$, we create multiple subsets $D_{ijk}$, each with a sample size corresponding to multiples of 100 up to $N(D_{ij})$    
+
+For example, $N(D_{ij}) = 564$ would yield five subsets: $D_{ij1}$ with 100 samples, $D_{ij2}$ with 200 samples, ..., $D_{ij5}$ with 500 samples, and $D_{ij6}$ with 564 samples.
+If abundance data were available, we conducted all analyzes on abundance and occurrence data. 
+If the number of subsets $k$ exceeded 10, we only used the 10 largest subsets. 
+For each $D_{ijk}$, we determined the spatial scale (minimum, median, and maximum spatial distance between sampling locations) and the taxonomic resolution as fraction of taxa identified to species, genus, family, or higher level.  
+-->
+<section id="modelling" class="level3">
+<h3 class="anchored" data-anchor-id="modelling">Modelling</h3>
+<!-- TODO add reference to section -->
+<p>For the first approach we did not perform any modelling. The analyses for this approach continue at section @ref{sec:Evaluating-typologies}. For the second approach, we fit a Hierarchical model of species communities <span class="citation" data-cites="ovaskainenJointSpeciesDistribution2020">(HMSC, <a href="#ref-ovaskainenJointSpeciesDistribution2020" role="doc-biblioref">Ovaskainen and Abrego 2020</a>)</span>, to each <span class="math inline">\(D_{ijk}\)</span>, to establish the relationship between biota and environmental variables, space, biotic interactions, and stochasticity. HMSC is a hierarchical Bayesian latent variable regression model, which is fit with block-conditional Gibbs MCMC sampler. We used a probit residual distribution for occurrence data and a Lognormal Poisson for abundance data. Each model was initially fit with two chains, 2000 MCMC samples, a thinning of two, and a transient period of 4000 samples.<br>
+The model fit was evaluated with the potential scale reduction factor [PSRF; <span class="citation" data-cites="gelmanInferenceIterativeSimulation1992">Gelman and Rubin (<a href="#ref-gelmanInferenceIterativeSimulation1992" role="doc-biblioref">1992</a>)</span>]. The PSRF compares the variance between multiple chains to the variance within each chain to assess chain convergence. If 10% estimated parameters have a PSRFs of &gt; 1.1 the model will be refit.<br>
+We will iteratively increase the chain length by increments of 1000 until &lt; 10% of PSRFs are &gt; 1.1. Thinning is always the number of MCMC samples divided by 1000, and the length of the transient equals the number of MCMC samples.<br>
+If &gt; 10% of parameters have a PSRF of &gt; 1.1 at a chain length of 10000 MCMC samples, <span class="math inline">\(D_{ijk}\)</span> was discarded from further analyses. We also discarded models with sub par predictive performance. This was evaluated in through the Area under the receiver operating characteristic curve <span class="citation" data-cites="hanleyMeaningUseArea1982">(AUROC, <a href="#ref-hanleyMeaningUseArea1982" role="doc-biblioref">Hanley and McNeil 1982</a>)</span> and a series of posterior predictive checks <span class="citation" data-cites="gelmanPosteriorPredictiveAssessment1996 connGuideBayesianModel2018">(<a href="#ref-gelmanPosteriorPredictiveAssessment1996" role="doc-biblioref">Gelman et al. 1996</a>; <a href="#ref-connGuideBayesianModel2018" role="doc-biblioref">Conn et al. 2018</a>)</span> These posterior predictive checks compared the observed community patterns to patterns generated from 150 posterior draws per fitted model. We used the last 50 draws from each chain. We assessed four diagnostic patterns: (1) beta diversity structure — the distribution of pairwise dissimilarities (Jaccard for occurrence, Bray-Curtis for abundance), (2) species co-occurrence patterns quantified with the C-score metric <span class="citation" data-cites="stoneCheckerboardScoreSpecies1990">(<a href="#ref-stoneCheckerboardScoreSpecies1990" role="doc-biblioref">Stone and Roberts 1990</a>)</span>, (3) species-environment relationships measured as weighted-average optima (ter Braak and Prentice 1988) for the ten most abundant taxa, and (4) species prevalence distributions capturing the commonness-rarity spectrum across all taxa. For each diagnostic, we calculated the proportion of observed values falling outside the 95% envelope of simulated values. Models were flagged for poor fit if three or more diagnostics indicated substantial deviation (|z| &gt; 2, where z is the standardized effect size). Flagged models with AUC &lt; 0.75 or &gt;10% of parameters with PSRF &gt; 1.1 at 10,000 MCMC samples were excluded from benchmark derivation (n = X models excluded). Detailed methods for each posterior predictive check are provided in Supplementary Methods SX.</p>
+<p>If the AUROC &lt; 0.75 or the</p>
+<p>Likewise, <span class="math inline">\(D_{ijk}\)</span> was not used if its predictive quality was bad (AUC &lt; 0.75).</p>
+</section>
+<section id="preparing-environmental-and-spatial-predictors" class="level3">
+<h3 class="anchored" data-anchor-id="preparing-environmental-and-spatial-predictors">Preparing environmental and spatial predictors</h3>
+<p>We have compiled and extensive data base of environmental variables relevant for freshwater organisms (Table 1). Each variable was be summarized at the catchment scale. As catchments we used the EU Hydro DEM catchment data base <span class="citation" data-cites="eeaEUHydroRiverNetwork2019">(<a href="#ref-eeaEUHydroRiverNetwork2019" role="doc-biblioref">EEA 2019</a>)</span>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div class="tabwid"><style>.cl-ed49b604{table-layout:auto;}.cl-ed3e0c64{font-family:'Arial';font-size:11pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-ed3e0c82{font-family:'Arial';font-size:10pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-ed423a00{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:4pt;padding-top:4pt;padding-left:4pt;padding-right:4pt;line-height: 1;background-color:transparent;}.cl-ed42572e{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-ed425738{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-ed425739{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-ed425742{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-ed425743{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-ed425744{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-ed42574c{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-ed42574d{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-ed42574e{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-ed425756{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-ed425760{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-ed425761{background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(102, 102, 102, 1.00);border-top: 1pt solid rgba(102, 102, 102, 1.00);border-left: 1pt solid rgba(102, 102, 102, 1.00);border-right: 1pt solid rgba(102, 102, 102, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing="true" class="cl-ed49b604"><thead><tr style="overflow-wrap:break-word;"><th class="cl-ed42572e"><p class="cl-ed423a00"><span class="cl-ed3e0c64">Variable</span></p></th><th class="cl-ed425738"><p class="cl-ed423a00"><span class="cl-ed3e0c64">Data product</span></p></th><th class="cl-ed425739"><p class="cl-ed423a00"><span class="cl-ed3e0c64">Reference</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-ed425742"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Rainfall erosivity</span></p></td><td class="cl-ed425743"><p class="cl-ed423a00"><span class="cl-ed3e0c82">GloREDa</span></p></td><td class="cl-ed425744"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Panagos et al. (2023)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed42574c"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Soil Organic Carbon</span></p></td><td class="cl-ed42574d"><p class="cl-ed423a00"><span class="cl-ed3e0c82">European Soil Database v2.0</span></p></td><td class="cl-ed42574e"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Panagos et al. (2022)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Soil pH in Water</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">EcoDataCube</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Witjes et al. (2023)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Slope</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Hydrography90m</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Amatulli et al. (2022)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Roughness</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Geomorpho90m</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Amatulli et al. (2020)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Floodplain Area</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Potential Flood prone Area</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">EEA (2020)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Mean annual discharge</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Copernicus C3S</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Berg et al. (2021)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Minimum annual discharge</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Copernicus C3S</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Berg et al. (2021)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Saturated Soil Water Content</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Soil Hydraulic Properties</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Tóth et al. (2015)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Upstream catchment area</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">HydroATLAS</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Linke et al (2019)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Maximum annual discharge</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Copernicus C3S</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Berg et al. (2021)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Snow Cover</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">HydroATLAS</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Linke et al (2019)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Segment Sinuosity</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">EU Hydro</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">EEA (2019)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Mean Valley Bottom Flatness Index</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">EcoDataCube</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Witjes et al. (2023)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Maximum Valley Bottom Flatness Index</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">EcoDataCube</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Witjes et al. (2023)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Mean Stream Power Index</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Hydrography90m</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Amatulli et al. (2022)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Maximum Stream Power Index</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Hydrography90m</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Amatulli et al. (2022)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Lake Index</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">HydroLAKES</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Messager et al. (2016)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Elevation</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Hydrography90m</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Amatulli et al. (2022)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Groundwater Table Depth</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">HydroATLAS</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Linke et al. (2019)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Glaciated Area in Catchment</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Randolph Glacier Inventory</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">RGI Consortium (2017)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Precipitation of Wettest Month</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">CHELSA-BIOCLIM+</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Brun et al. (2022)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Precipitation of Driest Month</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">CHELSA-BIOCLIM+</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Brun et al. (2022)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Minimum Temperature Coldest Month</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">CHELSA-BIOCLIM+</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Brun et al. (2022)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Maximum Temperature Warmest Month</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">CHELSA-BIOCLIM+</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Brun et al. (2022)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Bedrock Geology</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">IHME</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Cornu et al. (2013)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ed425756"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Catchment soil type</span></p></td><td class="cl-ed425760"><p class="cl-ed423a00"><span class="cl-ed3e0c82">European Soil Database v2.0</span></p></td><td class="cl-ed425761"><p class="cl-ed423a00"><span class="cl-ed3e0c82">Panagos et al. (2022)</span></p></td></tr></tbody></table></div>
+</div>
+</div>
+<p><br></p>
+<!-- Space -->
+<p>The effects of spatial proximity were captured with Moran’s Eigenvector Maps <span class="citation" data-cites="draySpatialModellingComprehensive2006">(MEM, <a href="#ref-draySpatialModellingComprehensive2006" role="doc-biblioref">Dray et al. 2006</a>)</span>. MEM transform Euclidean spatial distance matrices into eigenfunctions, giving rise to a large number of spatial eigenfunctions (typically number of samples - 1). Within each model, we used all spatial eigenfunctions that correlate statistically significant (at <span class="math inline">\(\alpha = 0.05\)</span>) with the residuals of logistic or Poisson regression fit to the single taxa. Before the selection, all <em>p</em>-values are adjusted for multiple testing using Holm’s step-down procedure <span class="citation" data-cites="westfallResamplingbasedMultipleTesting1993">(<a href="#ref-westfallResamplingbasedMultipleTesting1993" role="doc-biblioref">Westfall and Young 1993</a>)</span>. <span class="citation" data-cites="biniCoefficientShiftsGeographical2009">Bini et al. (<a href="#ref-biniCoefficientShiftsGeographical2009" role="doc-biblioref">2009</a>)</span> has shown that this way of selecting spatial eigenfunctions has minimal impact on the estimated regression coefficients for environmental variables.</p>
+</section>
+<section id="modelling-species-communities" class="level3">
+<h3 class="anchored" data-anchor-id="modelling-species-communities">Modelling species communities</h3>
+<p>With each successful model, we used variation partitioning to establish the fraction of variation explained by (i) each explanatory variable, (ii) environmental variables in total, (iii) spatial variables in total, and (iv) latent variables.<br>
+The explained variation across environmental variables can be interpreted as the strength of abiotic filtering. Similarly, the explained variation across spatial variables (MEMs) can be interpreted as the strength of spatial processes (dispersal limitation, mass effect). We interpreted the variation explained by latent variables as a signal of biotic interaction, though this is contentious <span class="citation" data-cites="blanchetCooccurrenceNotEvidence2020 dormannBioticInteractionsSpecies2018 valleSpeciesAssociationsJoint2023">(<a href="#ref-dormannBioticInteractionsSpecies2018" role="doc-biblioref">Dormann et al. 2018</a>; e.g., <a href="#ref-blanchetCooccurrenceNotEvidence2020" role="doc-biblioref">Blanchet et al. 2020</a>; <a href="#ref-valleSpeciesAssociationsJoint2023" role="doc-biblioref">Vallé et al. 2023</a>)</span>, as the latent variables can also capture unmeasured environmental drivers. Tjur’s <span class="math inline">\(R^2\)</span> <span class="citation" data-cites="tjurCoefficientsDeterminationLogistic2009">(<a href="#ref-tjurCoefficientsDeterminationLogistic2009" role="doc-biblioref">Tjur 2009</a>)</span> was used to evaluate the overall explained variation in occurrence models and xxx in abundance models.<br>
+The unexplained variance <span class="math inline">\(1-R^2_{Tjur}\)</span> or <span class="math inline">\(1-R^2\)</span>, was interpreted as stochasticity in community composition. Each of these values was be averaged across species for each <span class="math inline">\(D_{ijk}\)</span>.</p>
+</section>
+<section id="simulating-environments" class="level3">
+<h3 class="anchored" data-anchor-id="simulating-environments">Simulating environments</h3>
+<!-- TODO how many data sets -->
+<p>Each fitted model was used to simulate new biotic data sets <span class="math inline">\(\mathcal{Y}_{sim}\)</span>. For these simulations, we slight adjusted the environmental variables, creating simulated environments, <span class="math inline">\(\mathcal{X}_{\text{sim}}\)</span>. Let <span class="math inline">\(X = \{X_1, ..., X_p\}\)</span> denote the complete set of <span class="math inline">\(p\)</span> environmental variables in the original data set <span class="math inline">\(\mathcal{X}_{\text{org}}\)</span>, i.e., the explanatory variables in the HMSC models, excluding MEMs. For each <span class="math inline">\(D_{ijk}\)</span>, we randomly selected subsets of environmental variables <span class="math inline">\(S \subseteq \{1, ..., p\}\)</span>, where <span class="math inline">\(|S|\)</span> was randomly chosen between 3 and <span class="math inline">\(p\)</span>. For brevity, we omit the <span class="math inline">\(ijk\)</span> subscripts where context makes them clear (e.g., writing <span class="math inline">\(\mathcal{X}_{\text{org}}\)</span> instead of <span class="math inline">\(\mathcal{X}_{\text{org}_{ijk}}\)</span>, and <span class="math inline">\(S\)</span> instead of <span class="math inline">\(S_{ijk}\)</span>). This partitioned the original environmental variables <span class="math inline">\(X\)</span> into two disjoint sets: <span class="math inline">\(X_S\)</span>, the variables used to define simulated types and <span class="math inline">\(X_{S^C}\)</span>, the neglected variables. This randomization was performed across multiple iterations <span class="math inline">\(o = 1, ..., m\)</span>, generating different variable selections <span class="math inline">\(S_o\)</span> for each iteration.</p>
+<p>Let <span class="math inline">\(\mathcal{X}_S\)</span> denote the restriction of <span class="math inline">\(\mathcal{X}_{\text{org}}\)</span> to the variables <span class="math inline">\(X_S\)</span>. Each <span class="math inline">\(\mathcal{X}_S\)</span> was submitted to a k-means clustering. We tested between two and ten clusters and picked the solution with the highest average silhouette width <span class="citation" data-cites="kauffmanFindingGroupsData1990">(ASW, <a href="#ref-kauffmanFindingGroupsData1990" role="doc-biblioref">Kauffman and Rousseeuw 1990</a>)</span>, which had at least ten samples in the smallest cluster. If all classifications had a group with &lt; 10 samples, we picked the solution with the most classes for which only one class had &lt; 10 samples and balanced the classes by moving the samples from other classes that are closest to the small classes centroid to that class until it had 10 members. Additionally, we compute a fuzzy C means classification <span class="citation" data-cites="dunnFuzzyRelativeISODATA1973">(FCM, <a href="#ref-dunnFuzzyRelativeISODATA1973" role="doc-biblioref">Dunn 1973</a>)</span> of the same data and the number of centers determined in the k-means classification. Based on this k-means classification, we altered the values of <span class="math inline">\(\mathcal{X}_{\text{S}}\)</span> by adjusting the position of cluster centroids <span class="math inline">\(c\)</span> relative to each other and by shifting individuals sites closer to or farther way from the centroid of their cluster. The combination of this modified <span class="math inline">\(\mathcal{X}_{S}^*\)</span> and <span class="math inline">\(\mathcal{X}_{\text{S}^\text{C}}\)</span>, represented a simulated environment <span class="math inline">\(\mathcal{X}_{\text{sim}}\)</span>.</p>
+<p>A good typology is separated and compact, i.e., the centroids are far from each other and each site is close to its centroid. By randomly varying these two properties for each <span class="math inline">\(\mathcal{X}_{S}\)</span>, we create a total of 200 <span class="math inline">\(\mathcal{X}_{\text{sim}}\)</span> for each <span class="math inline">\(D_{ijk}\)</span>.</p>
+<p>To modify separation, we computed the location of the overall centroid <span class="math inline">\(\bar{c}\)</span> in environmental (<span class="math inline">\(\mathcal{X}_{S}\)</span>) space. We then randomly drew a dilation factor <span class="math inline">\(\gamma_s \sim \mathcal{U}(0, 0.25)\)</span> where <span class="math inline">\(\mathcal{U}\)</span> is a uniform distribution. The new centroids were computed as: <span class="math display">\[c_j^* = \bar{c_j} + \gamma_s (c - \bar{c_j})\]</span> <!-- TODO the cluster notation needs to be better explained --> To adjust the compactness, we drew a second dilation factor <span class="math inline">\(\gamma_c \sim \mathcal{U}(-0.5, 0.5)\)</span> and multiplied the distance between each site location <span class="math inline">\(\mathcal{X}_{Si}\)</span> and respective centroid <span class="math inline">\(c_j\)</span> by <span class="math inline">\(\gamma_c\)</span>. <span class="math display">\[d_i^* = \gamma_c \times \big(\mathcal{X}_{Si} - c_j\big)\ \forall i\in j\]</span> The we added this distance <span class="math inline">\(d_i^*\)</span> to the new centroids <span class="math inline">\(c_j\)</span>. <span class="math display">\[\mathcal{X}_{Si}^* = c_j + d_i^*\ \forall i\in j\]</span></p>
+<p>The ranges for dilation factors were determined through an exploratory analyses. We tested progressively wider ranges for both <span class="math inline">\(\gamma_{s}\)</span> and <span class="math inline">\(\gamma_{c}\)</span> across a subset of data sets and evaluated what proportion of simulated environments passed the Isolation Forest and Mahalanobis distance filters (described below). The ranges <span class="math inline">\(\mathcal{U}(0, 0.25)\)</span> and <span class="math inline">\(\mathcal{U}(-0.5, 0.5)\)</span> represent the widest intervals that still allowed sufficient simulations (~30% pass rate) to generate the target number of acceptable environments (200 per <span class="math inline">\(D_{ijk}\)</span>) within a computationally feasible number of attempts. See supplementary materials for a short exposition of these analyses.</p>
+<p>We were mindful not to create unrealistic non-analog environments. Each <span class="math inline">\(\mathcal{X}_{\text{sim}}\)</span> was subjected to two sanity checks. We tested whether the simulated combination was similar to existing environmental conditions observed in the same Environmental Zones <span class="citation" data-cites="metzgerClimaticStratificationEnvironment2005">(<a href="#ref-metzgerClimaticStratificationEnvironment2005" role="doc-biblioref">Metzger et al. 2005</a>)</span>. We chose the Environmental Zones as regionalization because (i) they span Europe, (ii) they are based on variation in environmental rather than biotic conditions , and (iii) they received relatively favorable results in previous studies <span class="citation" data-cites="jupkeEuropeanRiverTypologies2023">(<a href="#ref-jupkeEuropeanRiverTypologies2023" role="doc-biblioref">Jupke et al. 2023</a>)</span>. Most of our data sets spanned multiple Environmental Zones. In these cases, we merged all zones covered by the respective data set. We used the environmental variables form all the EU HydroDEM catchments in a given combination of Environmental Zones (<span class="math inline">\(\mathcal{X_{enz}}\)</span>) as training data for an Isolation Forest <span class="citation" data-cites="liuIsolationForest2008">(<a href="#ref-liuIsolationForest2008" role="doc-biblioref">Liu et al. 2008</a>)</span> to identify implausible environmental combinations. An Isolation Forest is an unsupervised anomaly detection algorithm that identifies outliers by randomly partitioning data through recursive splitting. The method exploits the principle that anomalies, being few and different, require fewer random partitions to be isolated compared to normal points, i.e., catchments. Each catchment receives an anomaly score (<span class="math inline">\(\mathcal{AS}\)</span>) based on its average path length across multiple isolation trees, where shorter paths indicate likely anomalies. With the trained forest, we computed the anomaly scores for <span class="math inline">\(\mathcal{X}_{\text{org}}\)</span>, i.e., <span class="math inline">\(\mathcal{AS}(\mathcal{X}_{\text{org}})\)</span>. Then we determined the z-scores for each catchment in <span class="math inline">\(\mathcal{X}_{\text{sim}}\)</span>, as <span class="math display">\[z_i = \frac{\mathcal{AS}(\mathcal{X}_{\text{sim}_i})-\overline{\mathcal{AS}(\mathcal{X}_{\text{org}})}}{SD(\mathcal{AS}(\mathcal{X}_{\text{org}}))}\]</span> A combination of dilation scores (<span class="math inline">\(\Gamma = (\gamma_s, \gamma_c)\)</span>) passes the Isolation Forest test if at least 75% of samples have a z-score <span class="math inline">\(\le\)</span> 1. For the second test we again used all the catchments in the respective environmental zones as a base line. We computed the means and covariance matrix of <span class="math inline">\(\mathcal{X}_{\text{enz}}\)</span> and then tested the Mahalanobis distance between <span class="math inline">\(\mathcal{X}_{\text{sim}}\)</span> and the original data. Using a chi-squared test, we evaluate how likely we would have been to observe <span class="math inline">\(\mathcal{X}_{\text{sim}}\)</span>, given the means and covariances of <span class="math inline">\(\mathcal{X_{enz}}\)</span>. A combination of dilation scores passed the Mahalanobis test if at least 90% of samples are within the central 99% of the <span class="math inline">\(\chi^2\)</span> distribution. If a <span class="math inline">\(\mathcal{X}_{\text{sim}}\)</span> passed both tests, it was used to simulate biotic communities. We iterated over this procedure until we had 200 <span class="math inline">\(\mathcal{X}_{\text{sim}}\)</span> for each <span class="math inline">\(D_{ijk}\)</span>. To obtain these, created 300 <span class="math inline">\(\Gamma\)</span> for each <span class="math inline">\(S\)</span>. Each <span class="math inline">\(\Gamma\)</span> is used to dilate the variables <span class="math inline">\(\mathcal{X}_S\)</span>, each resulting <span class="math inline">\(\mathcal{X}_{sim}\)</span> was evaluated through isolation forest and Mahalanobis distance tests. For each <span class="math inline">\(S\)</span>, a maximum number of 30 <span class="math inline">\(\mathcal{X}_{sim}\)</span> was used. For each <span class="math inline">\(D_{ijk}\)</span>, a maximum was 200 different <span class="math inline">\(S\)</span> was evaluated. For <span class="math inline">\(D_{ijk}\)</span>s where less than 200 <span class="math inline">\(\mathcal{X}_{sim}\)</span> passed both tests, we used all <span class="math inline">\(\mathcal{X}_{sim}\)</span> that passed.</p>
+<p>The underlying k means and FCM classifications of <span class="math inline">\(\mathcal{X}_{org}\)</span> where again evaluated for each <span class="math inline">\(\mathcal{X}_{sim}\)</span> using ASW and the normalized partitioning entropy <span class="citation" data-cites="bezdekPatternRecognitionFuzzy2013">(<a href="#ref-bezdekPatternRecognitionFuzzy2013" role="doc-biblioref">Bezdek 2013</a>)</span>, respectively. These classifications represent the simulated typologies, which were evaluated in the next step.</p>
+</section>
+<section id="simulating-communities" class="level3">
+<h3 class="anchored" data-anchor-id="simulating-communities">Simulating communities</h3>
+<p>For each validated simulated environment <span class="math inline">\(X_{sim}\)</span> we simulated an abundance or occurrence data set <span class="math inline">\(Y_{sim}\)</span>. Simulations were performed with the predict() function from Hmsc on the pooled chains of the accepted model (converged and posterior predictive checks). By default this method produces one predicted data set for each sample in the pooled MCMC-chain.<br>
+We opted to use the last fifty samples from each unpooled chain, i.e., a total of 150 simulated communities., the same number we used for the posterior predicitve checks. We averaged over these 150 communities to obtain one predicted community. For abundance data we took the arithmetic average of each taxon at each site. For occurrence data, we also took the arithmetic mean, which produces a number between 0 and 1. We used this number as the probability when drawing from a Bernoulli distribution to obtain the final simulated, averaged occurrence data set, <span class="math inline">\(Y_{sim}\)</span>.</p>
+</section>
+<section id="evaluating-typologies" class="level3">
+<h3 class="anchored" data-anchor-id="evaluating-typologies">Evaluating typologies</h3>
+<!-- TODO add correct number to SI-->
+<p>Both original and simulated data sets were evaluated with a section of methods. An extensive and harmonized explanation of all the metrics can be found in the supplementary materials (SX). We evaluated biovalidity with Analysis of Similarities <span class="citation" data-cites="clarkeNonparametricMultivariateAnalyses1993">(ANOSIM, <a href="#ref-clarkeNonparametricMultivariateAnalyses1993" role="doc-biblioref">Clarke 1993</a>)</span>, Classification Strength <span class="citation" data-cites="vansickleUsingMeanSimilarity1997">(CS, <a href="#ref-vansickleUsingMeanSimilarity1997" role="doc-biblioref">Van Sickle 1997</a>)</span>, Permutational Multivariate Analysis of Variance <span class="citation" data-cites="andersonNewMethodNonparametric2001">(PERMANOVA, <a href="#ref-andersonNewMethodNonparametric2001" role="doc-biblioref">Anderson 2001</a>)</span>, Indicator Species Analysis Minimizing Intermediate Constancies <span class="citation" data-cites="robertsPackageLabdsv2007">(ISAMIC, <a href="#ref-robertsPackageLabdsv2007" role="doc-biblioref">Roberts 2007</a>)</span>, and Area under the zeta diversity decline curve <span class="citation" data-cites="jupkeEuropeanRiverTypologies2023">(AUC<span class="math inline">\(\zeta\)</span>, <a href="#ref-jupkeEuropeanRiverTypologies2023" role="doc-biblioref">Jupke et al. 2023</a>)</span>. All distance based methods used Jaccard distance matrices for occurrence data and Bray-Curtis for abundance data of <span class="math inline">\(\mathcal{Y}_{sim}\)</span>. The ANOSIMs were run in a pairwise fashion for each possible combination of types, as suggested in <span class="citation" data-cites="clarkeChangeMarineCommunites2014">Clarke et al. (<a href="#ref-clarkeChangeMarineCommunites2014" role="doc-biblioref">2014</a>)</span>. As test statistics, we evaluated the minimum, mean, and maximum pairwise ANOSIM R values for each <span class="math inline">\(\mathcal{Y}_{sim}\)</span>. For PERMANOVA, we evaluated the <span class="math inline">\(R^2\)</span> and the <span class="math inline">\(F\)</span> statistic. For the computation of the AUC<span class="math inline">\(\zeta\)</span>, we sightly deviated from the original proposal in <span class="citation" data-cites="jupkeEuropeanRiverTypologies2023">Jupke et al. (<a href="#ref-jupkeEuropeanRiverTypologies2023" role="doc-biblioref">2023</a>)</span>. While we still evaluated <span class="math inline">\(\zeta\)</span>-diversity for ranks 1 to 10 and still scaled with the <span class="math inline">\(\alpha\)</span> diversity (i.e., <span class="math inline">\(\zeta_1\)</span>), we also divided each <span class="math inline">\(AUC\zeta\)</span> by a baseline <span class="math inline">\(AUC\zeta^b\)</span> which is the <span class="math inline">\(AUC\zeta\)</span> of inter-type comparisons. For CS and ISAMIC, we evaluated the eponymous test statistics.</p>
+<p>These evaluation approaches do not work properly for the fuzzy classification. For these approaches, we computed two additional metrics. Our first approach involves fitting binomial multiresponse GLMs <span class="citation" data-cites="wangMvabundPackageModelbased2012">(<a href="#ref-wangMvabundPackageModelbased2012" role="doc-biblioref">Wang et al. 2012</a>)</span> using the presence-absence data as response variables and the type-membership as explanatory variables. This method shows how much of the variation in occurrences can be explained by the type-memberships. We will quantify the model fit with the weighted average if explained deviance across all taxa. The deviances are weighted by the total number of taxon occurrences to prevent an undue influence of rare species. The best possible score is a 1, indicating the type-membership is able to perfectly predict the occurrence probability of every species. The worst score is 0, indicating the type-membership is independent of occurrence probabilities of all taxa.</p>
+<p>Our second approach consist of comparing the similarity of two communities in biological space (i.e., their Jaccard distance based on community composition) with the distance in type-membership space, i.e., the Jensen-Shannon distance between their type-membership vectors. This comparison will be achieved with a Mantel test <span class="citation" data-cites="mantelDetectionDiseaseClustering1967">(<a href="#ref-mantelDetectionDiseaseClustering1967" role="doc-biblioref">Mantel 1967</a>)</span> which computes the Pearson correlation between values in the distance matrices.</p>
+<!-- TODO add references -->
+<p>To provide a further baseline, we also evaluated each original data set using the same k-means approach as described above, Illies Freshwater Ecoregions <span class="citation" data-cites="illiesLimnofaunaEuropaea1978">(<a href="#ref-illiesLimnofaunaEuropaea1978" role="doc-biblioref">Illies 1978</a>)</span>, the Environmental Zones, GloRiC <span class="citation" data-cites="ouelletdallaireMultidisciplinaryFrameworkDerive2019">(<a href="#ref-ouelletdallaireMultidisciplinaryFrameworkDerive2019" role="doc-biblioref">Ouellet Dallaire et al. 2019</a>)</span>, Freshwater Ecoregions of the World <span class="citation" data-cites="abellFreshwaterEcoregionsWorld2008">(<a href="#ref-abellFreshwaterEcoregionsWorld2008" role="doc-biblioref">Abell et al. 2008</a>)</span>, EEA Biogeographic Regions <span class="citation" data-cites="evansUsesMapNatural2005">(<a href="#ref-evansUsesMapNatural2005" role="doc-biblioref">Evans 2005</a>)</span>, Hydroecological regions of Europe <span class="citation" data-cites="wassonEuropeanHydroEcoregions2007">(<a href="#ref-wassonEuropeanHydroEcoregions2007" role="doc-biblioref">Wasson et al. 2007</a>)</span>, and the Broad River Types <span class="citation" data-cites="lychesolheimNewBroadTypology2019">(<a href="#ref-lychesolheimNewBroadTypology2019" role="doc-biblioref">Lyche Solheim et al. 2019</a>)</span> with the same metrics.</p>
+<!-- software -->
+<p>Classification strength, ANOSIM, PERMANOVA will be computed with functions from the vegan package [2.7-1] <span class="citation" data-cites="oksanenVeganCommunityEcology2022">(<a href="#ref-oksanenVeganCommunityEcology2022" role="doc-biblioref">Oksanen et al. 2022</a>)</span>. <span class="math inline">\(AUC\zeta\)</span> will be computed with purpose written code and using the zetadiv package [1.3.0] <span class="citation" data-cites="latombeZetadivPackageComputing2018">(<a href="#ref-latombeZetadivPackageComputing2018" role="doc-biblioref">Latombe et al. 2018</a>)</span>. Indicator values will be computed with indicspecies [1.8.0] <span class="citation" data-cites="decaceresIndicspecies2019">(<a href="#ref-decaceresIndicspecies2019" role="doc-biblioref">De Cáceres and Legendre 2019</a>)</span> and ISAMIC with labdsv [2.1-2] <span class="citation" data-cites="robertsPackageLabdsv2007">(<a href="#ref-robertsPackageLabdsv2007" role="doc-biblioref">Roberts 2007</a>)</span>. Some of the computations will be parallelized with the R packages foreach [1.5.2] <span class="citation" data-cites="microsoftForeachProvidesForeach2022">(<a href="#ref-microsoftForeachProvidesForeach2022" role="doc-biblioref">Microsoft and Weston 2022</a>)</span> and doParallel [1.0.17] <span class="citation" data-cites="corporationDoParallelForeachParallel2022">(<a href="#ref-corporationDoParallelForeachParallel2022" role="doc-biblioref">Corporation and Weston 2022</a>)</span>. All code is available in the <a href="https://github.com/JonJup/AquaticTypologyBenchmark">associated github repository</a>.</p>
+</section>
+<section id="deriving-benchmarks" class="level3">
+<h3 class="anchored" data-anchor-id="deriving-benchmarks">Deriving benchmarks</h3>
+<p>To derive context-specific benchmarks from these evaluations, we will use Random Forest regression analyses using the tidymodels R package [1.4.0] <span class="citation" data-cites="kuhnTidymodelsCollectionPackages2020">(<a href="#ref-kuhnTidymodelsCollectionPackages2020" role="doc-biblioref">Kuhn and Wickham 2020</a>)</span>. We will fit separate random forests for each evaluation metric and taxon. In total, we will fit 80 random forest models (four taxa and 20 evaluation metrics). The key innovation of this approach is that benchmarks are conditional predictions: for a given combination of system properties (taxonomic group, spatial scale, sample size, ecological structure), the model predicts the expected range of biovalidity metric values. <!-- Tuning --> The random forest model will be implemented with Ranger [] with three hyperparameters subject to optimization: the number of trees, the number of variables randomly sampled at each split, and the minimum node size. We will employ a grid search strategy for hyperparameter tuning, using a <span class="math inline">\(5\ \times 5\)</span> grid for each parameter. The data will be split into training (75%) and testing (25%) sets. Ten-fold cross-validation will be applied to the training set to evaluate model performance across hyperparameter combinations. <!-- TODO Check that all variables are included --><br>
+The random forest models include three categories of predictors:<br>
+1. Typology characteristics: number of variables considered in the artificial typology, cumulative importance of these variables (from variation partitioning), average silhouette width of environmental variables, dilation of points relative to centroids, dilation of centroids relative to each other<br>
+2. Sampling design: minimum, maximum, mean, and median spatial distance among samples (capturing spatial scale), number of samples (statistical power), taxonomic resolution of the data set (fraction identified to species vs.&nbsp;higher levels)<br>
+3. Ecological structure: fraction of variation explained by environmental variables, spatial processes, biotic interactions, and stochasticity. These capture fundamental differences in community assembly - systems dominated by environmental filtering should show different biovalidity patterns than those structured primarily by dispersal limitation or biotic interactions.</p>
+<p>As predictors the model will use the number of variables considered in the artificial typology, the cumulative importance of these variables (according to the variation partitioning), the average silhouette width of the environmental variables in the typology, the dilation of points relative to their centroid, the dilation of centroids relative to each other, the minimum, maximum, mean, and median distance among samples, the number of samples, the fraction of variation explained by environmental variables, space, biotic interactions, and stochasiticity, and the taxonomic resolution of the data set. Following hyperparameter tuning, we select the model configuration that minimized root mean square error (RMSE) across folds. The final model will be fitted to the complete training set and evaluated on the held-out test set. Permutation-based variable importance will be specified to quantify predictor contributions. To interpret the fitted models, we generated two types of visualizations: (1) variable importance plots using permutation-based importance scores to identify the most influential predictors, and (2) partial dependence plots for the top predictors to visualize the marginal effect of each variable on the predicted response while holding other variables constant. This fitted model will be able to provide benchmarks.</p>
+</section>
+<section id="software" class="level3">
+<h3 class="anchored" data-anchor-id="software">Software</h3>
+<p>computed with the parallelDist R package [0.2.6] <span class="citation" data-cites="eckertParallelDistParallelDistance2022">(<a href="#ref-eckertParallelDistParallelDistance2022" role="doc-biblioref">Eckert 2022</a>)</span>. All analyses were run with (todo: ist with das richtige Wort?) Singularity containers <span class="citation" data-cites="kurtzerSingularityScientificContainers2017">(<a href="#ref-kurtzerSingularityScientificContainers2017" role="doc-biblioref">Kurtzer et al. 2017</a>)</span>. We used R version … and Python version …. (todo add version). The complete code and the container are available under … (todo add link). The Hmsc models were fit with Hmsc-HPC <span class="citation" data-cites="rahmanAcceleratingJointSpecies2024">(<a href="#ref-rahmanAcceleratingJointSpecies2024" role="doc-biblioref">Rahman et al. 2024</a>)</span> [version] with the sf R package [1.0-21] <span class="citation" data-cites="pebesmaSimpleFeaturesStandardized2018">(<a href="#ref-pebesmaSimpleFeaturesStandardized2018" role="doc-biblioref">Pebesma 2018</a>)</span> <span class="citation" data-cites="simonsohnGroundhogVersioncontrolCRAN2025">(<a href="#ref-simonsohnGroundhogVersioncontrolCRAN2025" role="doc-biblioref">Simonsohn and Gruson 2025</a>)</span> to use the package versions that were available on the 1st of December 2024. These are also the versions that are referenced throughout the text. Multiresponse GLMs were implemented with mvabund [4.2.1] <span class="citation" data-cites="wangMvabundStatisticalMethods2022">(<a href="#ref-wangMvabundStatisticalMethods2022" role="doc-biblioref">Wang et al. 2022</a>)</span>, Checks of posterior distributions were conducted with coda [0.19-4.1] <span class="citation" data-cites="plummerCODAConvergenceDiagnosis2006">(<a href="#ref-plummerCODAConvergenceDiagnosis2006" role="doc-biblioref">Plummer et al. 2006</a>)</span>. Data wrangling will be done with data.table [1.16.2] <span class="citation" data-cites="barrettDatatableExtensionDataframe2024">(<a href="#ref-barrettDatatableExtensionDataframe2024" role="doc-biblioref">Barrett et al. 2024</a>)</span>. Jenson-Shannon distance will be computed with philentropy [0.9.0] <span class="citation" data-cites="drostPhilentropyInformationTheory2018">(<a href="#ref-drostPhilentropyInformationTheory2018" role="doc-biblioref">Drost 2018</a>)</span>. The isolation forest was implemented with isotree [0.6.1-4] <span class="citation" data-cites="cortesIsotreeIsolationbasedOutlier2025">(<a href="#ref-cortesIsotreeIsolationbasedOutlier2025" role="doc-biblioref">Cortes 2025</a>)</span>. MEM will be implemented with the adespatial R package [0.3-2.4] <span class="citation" data-cites="drayAdespatialMultivariateMultiscale2024">(<a href="#ref-drayAdespatialMultivariateMultiscale2024" role="doc-biblioref">Dray et al. 2024</a>)</span>. as implemented in the coda package [0.19-4.1] <span class="citation" data-cites="plummerCODAConvergenceDiagnosis2006">(<a href="#ref-plummerCODAConvergenceDiagnosis2006" role="doc-biblioref">Plummer et al. 2006</a>)</span>. The FCM was implemented with the vegclust [2.0.3] R package <span class="citation" data-cites="decaceresDissimilarityMeasurementsSize2013">(<a href="#ref-decaceresDissimilarityMeasurementsSize2013" role="doc-biblioref">De Cáceres et al. 2013</a>)</span>.</p>
+<p>Consider a set of <span class="math inline">\(N\)</span> sites classified into <span class="math inline">\(T\)</span> distinct types <span class="math inline">\(t_1, t_2, \dots, t_T \in \tau\)</span>, where <span class="math inline">\(\tau\)</span> represents the complete typology system. Let <span class="math inline">\(x_i\)</span> be a site and <span class="math inline">\(\tau(x_i)\)</span> the function that returns its type assignment. For any site <span class="math inline">\(x_i\)</span>, let <span class="math inline">\(\bar{d}(x_i,\mathbf{x}_{\tau(x_i)})\)</span> represent the mean dissimilarity between <span class="math inline">\(x_i\)</span> and all other sites within its assigned type <span class="math inline">\(\tau(x_i)\)</span>. For any other type <span class="math inline">\(t_x \in \tau \setminus \{\tau(x_i)\}\)</span>, let <span class="math inline">\(\bar{d}(x_i,\mathbf{x}_{t_x})\)</span> denote the mean dissimilarity between <span class="math inline">\(x_i\)</span> and all sites in type <span class="math inline">\(t_x\)</span>. The neighbor type of <span class="math inline">\(x_i\)</span>, denoted as <span class="math inline">\(b(x_i)\)</span>, is defined as the type (excluding <span class="math inline">\(\tau(x_i)\)</span>) that minimizes the mean dissimilarity: <span class="math display">\[b(x_i)=\underset{x \in \tau \setminus \{\tau(x_i)\}}{argmin}\ \bar{d}(x_i,\mathbf{s}_{t_x})\]</span> The silhouette width quantifies how well <span class="math inline">\(x_i\)</span> fits within its assigned type compared to its neighbor type. For site <span class="math inline">\(x_i\)</span>, it is computed as:<br>
+<span class="math display">\[sw(x_i) = \dfrac{\bar{d}(x_i, \mathbf{x}_{b(x_i)}) - \bar{d}(x_i,\mathbf{x}_{\tau(x_i)})}{max\big\{\bar{d}(x_i, \mathbf{x}_{b(x_i)}), \bar{d}(x_i,\mathbf{x}_{t_{\tau(x_i)}})\big\}}\]</span></p>
+<p>The Average Silhouette Width (ASW) is calculated as the mean of individual silhouette widths across all sites: <span class="math display">\[ASW = \dfrac{1}{N}\Sigma_{i=1}^N sw(x_i)\]</span> The ASW ranges from -1 to 1, where -1 indicates the poorest possible type assignments and 1 represents optimal type assignments.</p>
+<!-- Classification Strength -->
+<p>The Classification Strength <span class="citation" data-cites="vansickleUsingMeanSimilarity1997">(CS, <a href="#ref-vansickleUsingMeanSimilarity1997" role="doc-biblioref">Van Sickle 1997</a>)</span> provides another measure to evaluate typology systems by comparing similarities within and among types. Given a similarity matrix <span class="math inline">\(\mathbf{S}\)</span> with elements <span class="math inline">\(s_{ij}\)</span> where <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> index over sites, we define the within type similarity for type T as: <span class="math display">\[W_T = \dfrac{1}{K_T} \sum_{i = 1}^N \sum_{\substack{j = 1\\ j \neq i}}^N s_{ij} \times \epsilon_{ij}\]</span></p>
+<p>where <span class="math inline">\(\epsilon_{ij} = 1\)</span> if sites <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> both belong to type <span class="math inline">\(T\)</span> (i.e., <span class="math inline">\(\tau(s_i)=\tau(s_j) = T\)</span>), and <span class="math inline">\(0\)</span> otherwise. <span class="math inline">\(K_T\)</span> represents the total number of pairwise comparisons within type <span class="math inline">\(T\)</span>, ensuring <span class="math inline">\(W_T\)</span> represents the mean similarity among sites of type <span class="math inline">\(T\)</span>. The among-type similarity for type <span class="math inline">\(T\)</span> is defined analogously: <span class="math display">\[B_T = \dfrac{1}{L_T} \sum_{i = 1}^N \sum_{\substack{j = 1\\ j \neq i}}^N s_{ij} \times (1-\epsilon_{ij})\]</span> where <span class="math inline">\(L_T\)</span> is the number of comparisons between sites in type <span class="math inline">\(T\)</span> and sites in all other types The type-specific classification strength is calculated as: <span class="math display">\[CS_t = W_t - B_t\]</span> This measure quantifies how much more similar sites are to others within their assigned type compared to sites in different types. The difference to SW is, that CS considers all other types and not only the neighbor. The Classification Strength for the complete typology system is computed as a weighted average of type-specific Classification Strengths: <span class="math display">\[CS = \sum_t^T \dfrac{n_t}{N} CS_t\]</span> where <span class="math inline">\(n_t\)</span> is the number of sites in type <span class="math inline">\(t\)</span> and <span class="math inline">\(N\)</span> is the total number of sites. Similar to the ASW, CS values range from -1 to 1, with higher values indicating more distinct and well-defined types.</p>
+<!-- ANOSIM -->
+<p>The Analysis of Similarities <span class="citation" data-cites="clarkeNonparametricMultivariateAnalyses1993">(ANOSIM, <a href="#ref-clarkeNonparametricMultivariateAnalyses1993" role="doc-biblioref">Clarke 1993</a>)</span> evaluates typology systems using ranked similarities rather than raw similarity values. Let <span class="math inline">\(\mathbf{S}_{rank}\)</span> be the matrix of ranked similarities derived from <span class="math inline">\(\mathbf{S}\)</span>, where lower ranks are assigned to higher similarities. For any pair of sites <span class="math inline">\((i,j)\)</span>, the element <span class="math inline">\(s^{rank}{ij}\)</span> represents the rank of the corresponding similarity <span class="math inline">\(s_{ij}\)</span>. We define <span class="math inline">\(\bar{r}_W\)</span> as the mean rank of within-type similarities and <span class="math inline">\(\bar{r}_B\)</span> as the mean rank of between-type similarities. The ANOSIM R statistic is computed as: <span class="math display">\[R = (\bar{r}_B - \bar{r}_W)/(M/2)\]</span> where <span class="math inline">\(M = N(N-1)/2\)</span> Like ASW and CS, the ANOSIM R statistic ranges from -1 to 1. A permutational <em>p</em>-value for R can be computed.</p>
+<p>Permutational multivariate analysis of variances <span class="citation" data-cites="andersonNewMethodNonparametric2001">(PERMANOVA, <a href="#ref-andersonNewMethodNonparametric2001" role="doc-biblioref">Anderson 2001</a>)</span> evaluates typology systems by analyzing the variance in dissimilarities among sites. For a dissimilarity matrix <span class="math inline">\(\mathbf{D}\)</span> with elements <span class="math inline">\(d_{ij}\)</span>, we compute two sums of squares: The total sum of squares: <span class="math display">\[SS_{total} = \dfrac{1}{N}\sum_{i=1}^{N-1} \sum_{j=i+1}^{N} d_{ij}^2\]</span></p>
+<p>The within-type sum of squares: <span class="math display">\[SS_{within} = \dfrac{1}{N}\sum{i=1}^{N-1} \sum{j=i+1}^{N} d_{ij}\times \epsilon_{ij}\]</span></p>
+<p>The pseudo F-ratio is then computed as: <span class="math display">\[F = \dfrac{SS_{within} / (T-1)}{SS_{total} / (N-T)}\]</span> Larger F-ratios indicate greater separation between type centroids in multivariate space. The statistical significance of the F-ratio can be assessed through a permutation test.</p>
+<!-- non geometric methods -->
+<p>Non-geometric measures evaluate typology systems directly from abundance or occurrence data, without requiring similarity metrics. These include the indicator species analysis <span class="citation" data-cites="dufreneSpeciesAssemblagesIndicator1997">(IndVal, <a href="#ref-dufreneSpeciesAssemblagesIndicator1997" role="doc-biblioref">Dufrêne and Legendre 1997</a>)</span>, Indicator Species Analysis Minimizing Intermediate Constancies <span class="citation" data-cites="robertsLabdsvOrdinationMultivariate2023">(ISAMIC, <a href="#ref-robertsLabdsvOrdinationMultivariate2023" role="doc-biblioref">Roberts 2023</a>)</span>, and Area Under the ζ-diversity Decline Curve <span class="citation" data-cites="jupkeEuropeanRiverTypologies2023">(AUCζ, <a href="#ref-jupkeEuropeanRiverTypologies2023" role="doc-biblioref">Jupke et al. 2023</a>)</span>.<br>
+<!--IndVal --> The indicator species analysis combines two components for each taxon <span class="math inline">\(h\)</span> in type <span class="math inline">\(t\)</span>: concentration (<span class="math inline">\(A_{ht}\)</span>) and relative frequency (<span class="math inline">\(F_{ht}\)</span>). A perfect indicator (IndVal = 1.0) occurs exclusively in one type (perfect concentration) and is present in all samples of that type (maximum frequency). For the group-equalized IndVal variant, which accounts for uneven sample sizes across types <span class="citation" data-cites="decaceresImprovingIndicatorSpecies2010">(<a href="#ref-decaceresImprovingIndicatorSpecies2010" role="doc-biblioref">De Cáceres et al. 2010</a>)</span>, we compute the concentration component as: <span class="math display">\[A^g_{ht} = \frac{a^g_t}{a^g}\]</span> where <span class="math inline">\(a^g_t = \frac{N}{k}\sum_{i \in t}(a_i/N_i)\)</span> is the group-equalized sum of abundances in type <span class="math inline">\(t\)</span>, and <span class="math inline">\(a^g = \frac{N}{k}\sum_{i \in K}(a_i/N_i)\)</span> is the total group-equalized abundance. The frequency component as: <span class="math display">\[B_{ht} = \frac{n_{ht}}{N_t}\]</span> where <span class="math inline">\(n_{ht}\)</span> is the number of occurrences of taxon <span class="math inline">\(h\)</span> in type <span class="math inline">\(t\)</span>, and <span class="math inline">\(N_t\)</span> is the total number of sites in type <span class="math inline">\(t\)</span>. The group-equalized IndVal for taxon <span class="math inline">\(h\)</span> in type <span class="math inline">\(t\)</span> is then: <span class="math display">\[IndVal^g_{ht} = \sqrt{A^g_{ht} \times B_{ht}} \times 100\]</span> For each species, only the highest IndVal is considered. <span class="math display">\[IndVal^g_h = \max_{t}(IndVal^g_{ht})\]</span> Statistical significance of each IndVal is assessed through a permutation test. Since multiple tests are performed (one for each taxon), the resulting p-values are adjusted using Holm’s step-down procedure to control for multiple comparisons <span class="citation" data-cites="westfallResamplingbasedMultipleTesting1993">(<a href="#ref-westfallResamplingbasedMultipleTesting1993" role="doc-biblioref">Westfall and Young 1993</a>)</span>. Two metrics evaluate the overall quality of the typology system: 1. The proportion of significant indicator taxa (at <span class="math inline">\(\alpha = 0.05\)</span>), denoted as <span class="math inline">\(N_{sig}\)</span>: <span class="math display">\[N_{sig}=\frac{1}{H}\sum_{h=1}{H}I(p_h&lt;0.05)\]</span> where <span class="math inline">\(I()\)</span> is the indicator function, <span class="math inline">\(H\)</span> the number of species and <span class="math inline">\(p_h\)</span> is the adjusted <span class="math inline">\(p\)</span>-value for taxon <span class="math inline">\(h\)</span>. 2. The mean adjusted p-value across all taxon-type combinations: <span class="math display">\[\bar{p} = \frac{1}{H} \sum_{h=1}^H p_h\]</span></p>
+<p>A superior typology system is characterized by a higher <span class="math inline">\(N_{sig}\)</span> and a lower <span class="math inline">\(\bar{p}\)</span>.</p>
+<p>The Indicator Species Analysis Minimizing Intermediate Constancies (ISAMIC) evaluates how consistently species occur within types. For each taxon <span class="math inline">\(h\)</span> and type <span class="math inline">\(t\)</span>, we calculate: <span class="math display">\[ISAMIC = \frac{\sum_{h=1}^{H}\left\{\left(2\sum_{t=1}^{T}|F_{ht}-0.5|\right)/T\right\}}{N}\]</span> The metric quantifies the predictability of species occurrence patterns. Values close to 1 indicate that species tend to be either consistently present or consistently absent within types Values close to 0 indicate that species occurrences are unpredictable, with frequencies close to 0.5 Higher ISAMIC values suggest a more effective typology system.</p>
+<p>The Area Under the Zeta diversity Curve <span class="citation" data-cites="jupkeEuropeanRiverTypologies2023">(AUCζ, <a href="#ref-jupkeEuropeanRiverTypologies2023" role="doc-biblioref">Jupke et al. 2023</a>)</span> quantifies the rate at which the number of shared taxa decreases along an increasing number of sampling sites. The zeta (ζ) diversity of degree <span class="math inline">\(q\)</span> represents the mean number of species shared across <span class="math inline">\(q\)</span> sites <span class="citation" data-cites="huiZetaDiversityConcept2014">(<a href="#ref-huiZetaDiversityConcept2014" role="doc-biblioref">Hui and McGeoch 2014</a>)</span>. <span class="math display">\[\zeta_q = \mathbb{E}\left[\bigcap_{j=1}^q y_j\right]\]</span> where <span class="math inline">\(y_j\)</span> represents the set of species in site <span class="math inline">\(j\)</span>. For any typology system, we compute the ζ-diversity within-types <span class="math inline">\(\zeta^w_q\)</span> using sites from the same type and the ζ-diversity between-types <span class="math inline">\(\zeta^b_q\)</span> using sites from different types. As ζ-diversity declines monotonically with increasing <span class="math inline">\(q\)</span>, we can compute the area under the decline curves to quantify the speed and magnitude of turnover. The AUCζ for is calculated as: <span class="math display">\[AUC\zeta^w = \frac{1}{\zeta_1}\sum_{q=2}^{10} \frac{\zeta^w_i + \zeta^w_{i-1}}{2}\]</span> <span class="math display">\[AUC\zeta^b = \frac{1}{\zeta_1}\sum_{q=2}^{10} \frac{\zeta^b_i + \zeta^b_{i-1}}{2}\]</span> We divide by <span class="math inline">\(\zeta_1\)</span> to obtain results that are independent of species richness. The effectiveness of a typology system can be quantified by the ratio: <span class="math display">\[\Delta AUC\zeta = \frac{AUC\zeta^w}{AUC\zeta^b}\]</span> where values &gt; 1 indicate lower turnover within types than between types.</p>
+<p>Lastly, we will compute one evaluation metric for a fuzzy classification. Using gradual instead of binary type-membership, such classifications offer advantages for capturing ecological gradients but are less commonly used. The evaluation criteria we have discussed thus far assume crisp classifications and cannot be applied to fuzzy classifications. Therefore, we will use two approaches specific to fuzzy classifications. To our knowledge, these approaches have not been previously applied to bio validation of typology systems.</p>
+<p>Our first approach involves fitting binomial multiresponse GLMs <span class="citation" data-cites="wangMvabundPackageModelbased2012">(<a href="#ref-wangMvabundPackageModelbased2012" role="doc-biblioref">Wang et al. 2012</a>)</span> using the presence-absence data as response variables and the type-membership as explanatory variables. This method shows how much of the variation in biota can be explained by the type-memberships. We will quantify the model fit with the weighted average if explained deviance across all taxa. The deviances are weighted by the total number of taxon occurrences to prevent an undue influence of rare species. The best possible score is a 1, indicating the type-membership is able to perfectly predict the occurrence probability of every species. The worst score is 0, indicating the type-membership is independent of occurrence probabilities of all taxa.</p>
+<p>Our second approach consist of comparing the similarity of two communities in biological space (i.e., their Jaccard distance based on community composition) with the distance in type-membership space, i.e., the Jensen-Shannon distance between their type-membership vectors. This comparison will be achieved with a Mantel test <span class="citation" data-cites="mantelDetectionDiseaseClustering1967">(<a href="#ref-mantelDetectionDiseaseClustering1967" role="doc-biblioref">Mantel 1967</a>)</span> which computes the Pearson correlation between values in the distance matrices.</p>
+</section>
+</section>
+</section>
+<section id="supplementary-methods-sx-posterior-predictive-validation-of-hmsc-models" class="level1">
+<h1>Supplementary Methods SX: Posterior Predictive Validation of HMSC Models –&gt;</h1>
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<p>Posterior predictive checks assess whether models can reproduce key ecological patterns observed in empirical data <span class="citation" data-cites="gelmanPosteriorPredictiveAssessment1996">(<a href="#ref-gelmanPosteriorPredictiveAssessment1996" role="doc-biblioref">Gelman et al. 1996</a>)</span>. Rather than relying solely on aggregate fit statistics (e.g., AUC), we evaluated whether fitted HMSC models reproduced four fundamental community patterns: beta diversity structure, species co-occurrence, species-environment relationships, and prevalence distributions. For each fitted model, we generated 150 simulated data sets by sampling from the posterior distribution of model parameters. Specifically, we selected the last 50 samples samples from each MCMC chain.</p>
+<section id="beta-diversity-structure" class="level3">
+<h3 class="anchored" data-anchor-id="beta-diversity-structure">Beta Diversity Structure</h3>
+<p>We evaluated whether models reproduced the observed distribution of pairwise dissimilarities. For each data set (observed and simulated), we computed all pairwise community dissimilarities using Jaccard distance for occurrence data or Bray-Curtis distance for abundance data. We then compared the 5th, 25th, 50th, 75th, and 95th percentiles of their distributions.</p>
+<p>For each quantile, we calculated the 95% envelope across the simulated data sets (i.e., the 2.5th and 97.5th percentiles of simulated quantile values). Models were flagged if any observed quantile fell outside its corresponding envelope. Additionally, we computed a standardized effect size for the median dissimilarity <span class="math display">\[z = \dfrac{(median_{obs} - \bar{median_{sim}})}{sd(medain_{sim})}\]</span>. This metric indicates whether the model systematically over- or under-estimates compositional turnover.</p>
+</section>
+<section id="species-co-occurrence-patterns" class="level3">
+<h3 class="anchored" data-anchor-id="species-co-occurrence-patterns">Species Co-occurrence Patterns</h3>
+<p>Co-occurrence patterns reflect biotic interactions, shared environmental preferences, and assembly history <span class="citation" data-cites="gotelliNULLMODELANALYSIS2000">(<a href="#ref-gotelliNULLMODELANALYSIS2000" role="doc-biblioref">Gotelli 2000</a>)</span>. The C-score quantifies the prevalence of “checkerboard” patterns—species pairs that rarely co-occur at sites <span class="citation" data-cites="stoneCheckerboardScoreSpecies1990">(<a href="#ref-stoneCheckerboardScoreSpecies1990" role="doc-biblioref">Stone and Roberts 1990</a>)</span>.</p>
+<p>For each data set, we calculated the C-score across all species pairs with <span class="math inline">\(\ge 2\)</span> occurrences. For species <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>, the checkerboard score is <span class="math display">\[C_{ij} = (r_{i} - S_{ij}) × (r_{j} - S_{ij})\]</span> , where <span class="math inline">\(r_i\)</span> and <span class="math inline">\(r_j\)</span> are the number of sites each species occupies, and <span class="math inline">\(S_ij\)</span> is the number of sites where both occur. The C-score is the mean of <span class="math inline">\(C_{ij}\)</span> across all species pairs. Higher C-scores indicate more checkerboard patterns (potential competitive exclusion); lower scores suggest aggregation (positive associations).</p>
+<p>We calculated the C-score for observed data and each of the 150 simulated data sets, then computed the standardized effect size: <span class="math display">\[z = \dfrac{C_{obs} - \bar{C_{sim}}}{sd(C_{sim})}\]</span> Models were flagged if |z| &gt; 2.</p>
+</section>
+<section id="species-environment-relationships" class="level3">
+<h3 class="anchored" data-anchor-id="species-environment-relationships">Species-Environment Relationships</h3>
+<p>Even if community-level predictions are adequate, individual species may show incorrect environmental responses. We evaluated whether the ten most abundant species exhibited consistent environmental optima between observed and simulated data.</p>
+<p>For each species <span class="math inline">\(i\)</span> and environmental variable <span class="math inline">\(x\)</span>, we calculated the abundance-weighted mean: c_he = Σ(a_ih × e_i) / Σ(a_ih) <span class="math display">\[c_{ie} = \dfrac{\sum a_{ij} \times x_j}{\sum a_{ij}}\]</span></p>
+<p>where <span class="math inline">\(a_{ij}\)</span> is the abundance of species <span class="math inline">\(i\)</span> at site <span class="math inline">\(j\)</span>, and <span class="math inline">\(x_j\)</span> is the value of environmental variable <span class="math inline">\(x\)</span> at site <span class="math inline">\(j\)</span>. For presence-absence data, <span class="math inline">\(a_{ij} \in \{0,1\}\)</span>. This yields the “center of gravity” of each species along each environmental gradient.</p>
+<p>For each species-environment combination in the observed data, we calculated the corresponding optimum in each of the 150 simulated data sets. We then computed the standardized effect size <span class="math display">\[z_{ix} = \dfrac{c_{ix;obs} - \bar{c_{ix;sim}}}{sd(c_{ix;sim})} \]</span> Individual relationships were flagged if <span class="math inline">\(|z_{ix}|&gt;2\)</span>. We summarized model performance as the proportion of species-environment combinations flagged. Models with &gt;20% of relationships flagged were considered poorly calibrated.</p>
+</section>
+<section id="species-prevalence-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="species-prevalence-distribution">Species Prevalence Distribution</h3>
+<p>The prevalence distribution — how many sites each species occupies — reflects fundamental macroecological patterns <span class="citation" data-cites="gastonPatternProcessMacroecology2000">(<a href="#ref-gastonPatternProcessMacroecology2000" role="doc-biblioref">Gaston and Blackburn 2000</a>)</span>. Most communities show right-skewed distributions with many rare species and few ubiquitous species. Models that fail to reproduce this pattern may inadequately capture ecological ground truth.</p>
+<p>For each data set, we calculated prevalence for each species as the proportion of sites occupied. We then summarized the prevalence distribution with five statistics: (1) number of rare species (prevalence &lt; 0.05), (2) number of uncommon species (0.05 ≤ prevalence &lt; 0.25), (3) number of common species (0.25 ≤ prevalence &lt; 0.75), (4) number of ubiquitous species (prevalence ≥ 0.75), and (5) distribution skewness.</p>
+<p>For each statistic, we calculated standardized effect sizes comparing observed to simulated values. Models were flagged if the number of rare species or ubiquitous species deviated substantially (<span class="math inline">\(|z| &gt; 2\)</span>) from simulated distributions.</p>
+</section>
+<section id="decision-rules" class="level3">
+<h3 class="anchored" data-anchor-id="decision-rules">Decision Rules</h3>
+<p>For each model, we tallied the number of flagged diagnostics (0-4). Models with any flagged diagnostics were considered inadequate for generating communities. These models were excluded from benchmark derivation.</p>
+</section>
+<section id="software-implementation" class="level3">
+<h3 class="anchored" data-anchor-id="software-implementation">Software Implementation</h3>
+<p>All posterior predictive checks were implemented in R version [X.X.X]. Beta diversity calculations used the vegan package [2.7-1] <span class="citation" data-cites="oksanenVeganCommunityEcology2022">(<a href="#ref-oksanenVeganCommunityEcology2022" role="doc-biblioref">Oksanen et al. 2022</a>)</span>. C-scores were computed with custom functions adapted from EcoSimR <span class="citation" data-cites="gotelliEcoSimRNullModel2015">(<a href="#ref-gotelliEcoSimRNullModel2015" role="doc-biblioref">Gotelli et al. 2015</a>)</span>. Posterior sampling from HMSC models used the predict() function from Hmsc [3.3-7] <span class="citation" data-cites="tikhonovHmscHierarchicalModel2022">(<a href="#ref-tikhonovHmscHierarchicalModel2022" role="doc-biblioref">Tikhonov et al. 2022</a>)</span>. Code for all diagnostics is available in the associated GitHub repository (https://github.com/JonJup/AquaticTypologyBenchmark).</p>
+</section>
+</section>
+</section>
+<section id="acknowledgements" class="level1">
+<h1>Acknowledgements</h1>
+</section>
+<section id="references" class="level1 unnumbered">
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-abellFreshwaterEcoregionsWorld2008" class="csl-entry" role="listitem">
+Abell R, Thieme ML, Revenga C, et al (2008) Freshwater <span>Ecoregions</span> of the <span>World</span>: <span>A New Map</span> of <span>Biogeographic Units</span> for <span>Freshwater Biodiversity Conservation</span>. BioScience 58:403–414. <a href="https://doi.org/10.1641/B580507">https://doi.org/10.1641/B580507</a>
+</div>
+<div id="ref-alahuhtaComparativeAnalysisReveals2017" class="csl-entry" role="listitem">
+Alahuhta J, Ecke F, Johnson LB, et al (2017) A comparative analysis reveals little evidence for niche conservatism in aquatic macrophytes among four areas on two continents. Oikos 126:136–148. <a href="https://doi.org/10.1111/oik.03154">https://doi.org/10.1111/oik.03154</a>
+</div>
+<div id="ref-amatulliHydrography90mNewHighresolution2022" class="csl-entry" role="listitem">
+Amatulli G, Garcia Marquez J, Sethi T, et al (2022) Hydrography90m: A new high-resolution global hydrographic dataset. Earth System Science Data 14:4525–4550. <a href="https://doi.org/10.5194/essd-14-4525-2022">https://doi.org/10.5194/essd-14-4525-2022</a>
+</div>
+<div id="ref-amatulliGeomorpho90mEmpiricalEvaluation2020" class="csl-entry" role="listitem">
+Amatulli G, McInerney D, Sethi T, et al (2020) Geomorpho90m, empirical evaluation and accuracy assessment of global high-resolution geomorphometric layers. Scientific Data 7:162. <a href="https://doi.org/10.1038/s41597-020-0479-6">https://doi.org/10.1038/s41597-020-0479-6</a>
+</div>
+<div id="ref-andersonNewMethodNonparametric2001" class="csl-entry" role="listitem">
+Anderson MJ (2001) A new method for non-parametric multivariate analysis of variance. Austral Ecology 26:32–46. <a href="https://doi.org/10.1111/j.1442-9993.2001.01070.pp.x">https://doi.org/10.1111/j.1442-9993.2001.01070.pp.x</a>
+</div>
+<div id="ref-barrettDatatableExtensionDataframe2024" class="csl-entry" role="listitem">
+Barrett T, Dowle M, Srinivasan A, et al (2024) Data.table: <span>Extension</span> of ‘data.frame‘
+</div>
+<div id="ref-bergHydrologyRelatedClimate2021" class="csl-entry" role="listitem">
+Berg P, Photiadou C, Bartosova A, et al (2021) <a href="https://doi.org/10.24381/cds.73237ad6">Hydrology related climate impact indicators from 1970 to 2100 derived from bias adjusted <span>European</span> climate projections</a>
+</div>
+<div id="ref-bevanRegionalBiomesOutperform2024" class="csl-entry" role="listitem">
+Bevan PA, Ferreira GB, Ingram DJ, et al (2024) Regional <span>Biomes</span> outperform broader spatial units in capturing biodiversity responses to land-use change. Ecography e07318. <a href="https://doi.org/10.1111/ecog.07318">https://doi.org/10.1111/ecog.07318</a>
+</div>
+<div id="ref-bezdekPatternRecognitionFuzzy2013" class="csl-entry" role="listitem">
+Bezdek JC (2013) Pattern <span>Recognition</span> with <span>Fuzzy Objective Function Algorithms</span>. Springer Science &amp; Business Media
+</div>
+<div id="ref-biniCoefficientShiftsGeographical2009" class="csl-entry" role="listitem">
+Bini LM, Diniz-Filho JAF, Albaladejo RG, et al (2009) Coefficient shifts in geographical ecology: An empirical evaluation of spatial and non-spatial regression. Ecography 32:193–204. <a href="https://doi.org/10.1111/j.1600-0587.2009.05717.x">https://doi.org/10.1111/j.1600-0587.2009.05717.x</a>
+</div>
+<div id="ref-blanchetCooccurrenceNotEvidence2020" class="csl-entry" role="listitem">
+Blanchet FG, Cazelles K, Gravel D (2020) Co-occurrence is not evidence of ecological interactions. Ecology Letters 23:1050–1063. <a href="https://doi.org/10.1111/ele.13525">https://doi.org/10.1111/ele.13525</a>
+</div>
+<div id="ref-bogota-gregoryGeomorphologicalHabitatType2023" class="csl-entry" role="listitem">
+Bogotá-Gregory JD, Jenkins DG, Lima FCT, et al (2023) Geomorphological habitat type drives variation in temporal species turnover but not temporal nestedness in <span>Amazonian</span> fish assemblages. Oikos e09967. <a href="https://doi.org/10.1111/oik.09967">https://doi.org/10.1111/oik.09967</a>
+</div>
+<div id="ref-brunCHELSABIOCLIMNovelSet2022" class="csl-entry" role="listitem">
+Brun P, Zimmermann NE, Hari C, et al (2022) <span>CHELSA-BIOCLIM</span>+ <span>A</span> novel set of global climate-related predictors at kilometre-resolution
+</div>
+<div id="ref-burnerTraitsMediateNiches2021" class="csl-entry" role="listitem">
+Burner RC, Stephan JG, Drag L, et al (2021) Traits mediate niches and co-occurrences of forest beetles in ways that differ among bioclimatic regions. Journal of Biogeography 48:3145–3157. <a href="https://doi.org/10.1111/jbi.14272">https://doi.org/10.1111/jbi.14272</a>
+</div>
+<div id="ref-clarkeNonparametricMultivariateAnalyses1993" class="csl-entry" role="listitem">
+Clarke KR (1993) Non-parametric multivariate analyses of changes in community structure. Austral Ecology 18:117–143. <a href="https://doi.org/10.1111/j.1442-9993.1993.tb00438.x">https://doi.org/10.1111/j.1442-9993.1993.tb00438.x</a>
+</div>
+<div id="ref-clarkeChangeMarineCommunites2014" class="csl-entry" role="listitem">
+Clarke KR, Gorley RN, Somerfield PJ, Warwick RM (2014) Change in <span>Marine Communites</span>: <span>An Approach</span> to <span>Statistical Analysis</span> and <span>Interpretation</span>, 3rd edn. PRIMER-E, Plymouth
+</div>
+<div id="ref-connGuideBayesianModel2018" class="csl-entry" role="listitem">
+Conn PB, Johnson DS, Williams PJ, et al (2018) A guide to <span>Bayesian</span> model checking for ecologists. Ecological Monographs 88:526–542. <a href="https://doi.org/10.1002/ecm.1314">https://doi.org/10.1002/ecm.1314</a>
+</div>
+<div id="ref-rgiconsortiumRandolphGlacierInventory2017" class="csl-entry" role="listitem">
+Consortium R (2017) Randolph <span>Glacier Inventory</span> – <span>A Dataset</span> of <span>Global Glacier Outlines</span>: <span>Version</span> 6.0: <span>Technical Report</span>, <span>Global Land Ice Measurements</span> from <span>Space</span>, <span>Colorado</span>, <span>USA</span>. <span>Digital Media</span>.
+</div>
+<div id="ref-cornuDistributionGroundwaterHabitats2013" class="csl-entry" role="listitem">
+Cornu J-F, Eme D, Malard F (2013) The distribution of groundwater habitats in <span>Europe</span>. Hydrogeology Journal 21:949–960. <a href="https://doi.org/10.1007/s10040-013-0984-1">https://doi.org/10.1007/s10040-013-0984-1</a>
+</div>
+<div id="ref-corporationDoParallelForeachParallel2022" class="csl-entry" role="listitem">
+Corporation M, Weston S (2022) <span class="nocase">doParallel</span>: <span>Foreach</span> parallel adaptor for the ’parallel’ package
+</div>
+<div id="ref-cortesIsotreeIsolationbasedOutlier2025" class="csl-entry" role="listitem">
+Cortes D (2025) <a href="https://doi.org/10.32614/CRAN.package.isotree">Isotree: <span class="nocase">Isolation-based</span> outlier detection</a>
+</div>
+<div id="ref-crouchFalseEvidenceRate2025" class="csl-entry" role="listitem">
+Crouch DJM (2025) The false evidence rate: <span>An</span> approach to frequentist error rate control conditioning on the observed <span><em>P</em></span> value. Proceedings of the National Academy of Sciences 122:e2415706122. <a href="https://doi.org/10.1073/pnas.2415706122">https://doi.org/10.1073/pnas.2415706122</a>
+</div>
+<div id="ref-decaceresIndicspecies2019" class="csl-entry" role="listitem">
+De Cáceres M, Legendre P (2019) Indicspecies
+</div>
+<div id="ref-decaceresDissimilarityMeasurementsSize2013" class="csl-entry" role="listitem">
+De Cáceres M, Legendre P, He F (2013) Dissimilarity measurements and the size structure of ecological communities. Methods in Ecology and Evolution 4:1167–1177. <a href="https://doi.org/10.1111/2041-210X.12116">https://doi.org/10.1111/2041-210X.12116</a>
+</div>
+<div id="ref-decaceresImprovingIndicatorSpecies2010" class="csl-entry" role="listitem">
+De Cáceres M, Legendre P, Moretti M (2010) Improving indicator species analysis by combining groups of sites. Oikos 119:1674–1684. <a href="https://doi.org/10.1111/j.1600-0706.2010.18334.x">https://doi.org/10.1111/j.1600-0706.2010.18334.x</a>
+</div>
+<div id="ref-denisonIntegratingRegionalFrameworks2021" class="csl-entry" role="listitem">
+Denison CD, Scott MC, Kubach KM, Peoples BK (2021) Integrating <span>Regional Frameworks</span> and <span>Local Variability</span> for <span>Riverine Bioassessment</span>. Environmental Management 68:126–145. <a href="https://doi.org/10.1007/s00267-021-01479-6">https://doi.org/10.1007/s00267-021-01479-6</a>
+</div>
+<div id="ref-dormannBioticInteractionsSpecies2018" class="csl-entry" role="listitem">
+Dormann CF, Bobrowski M, Dehling DM, et al (2018) Biotic interactions in species distribution modelling: 10 questions to guide interpretation and avoid false conclusions. Global Ecology and Biogeography 27:1004–1016. <a href="https://doi.org/10.1111/geb.12759">https://doi.org/10.1111/geb.12759</a>
+</div>
+<div id="ref-drayAdespatialMultivariateMultiscale2024" class="csl-entry" role="listitem">
+Dray S, Bauman D, Blanchet G, et al (2024) <span class="nocase">adespatial</span>: <span>Multivariate</span> multiscale spatial analysis
+</div>
+<div id="ref-draySpatialModellingComprehensive2006" class="csl-entry" role="listitem">
+Dray S, Legendre P, Peres-Neto PR (2006) Spatial modelling: A comprehensive framework for principal coordinate analysis of neighbour matrices (<span>PCNM</span>). Ecological Modelling 196:483–493. <a href="https://doi.org/10.1016/j.ecolmodel.2006.02.015">https://doi.org/10.1016/j.ecolmodel.2006.02.015</a>
+</div>
+<div id="ref-drostPhilentropyInformationTheory2018" class="csl-entry" role="listitem">
+Drost H-G (2018) Philentropy: <span>Information Theory</span> and <span>Distance Quantification</span> with <span>R</span>. Journal of Open Source Software 3:765. <a href="https://doi.org/10.21105/joss.00765">https://doi.org/10.21105/joss.00765</a>
+</div>
+<div id="ref-dufreneSpeciesAssemblagesIndicator1997" class="csl-entry" role="listitem">
+Dufrêne M, Legendre P (1997) Species <span>Assemblages And Indicator Species</span>:the <span>Need For A Flexible Asymmetrical Approach</span>. Ecological Monographs 67:345–366. <a href="https://doi.org/10.1890/0012-9615(1997)067[0345:SAAIST]2.0.CO;2">https://doi.org/10.1890/0012-9615(1997)067[0345:SAAIST]2.0.CO;2</a>
+</div>
+<div id="ref-dunnFuzzyRelativeISODATA1973" class="csl-entry" role="listitem">
+Dunn JC (1973) A <span>Fuzzy Relative</span> of the <span>ISODATA Process</span> and <span>Its Use</span> in <span>Detecting Compact Well-Separated Clusters</span>. Journal of Cybernetics 3:32–57. <a href="https://doi.org/10.1080/01969727308546046">https://doi.org/10.1080/01969727308546046</a>
+</div>
+<div id="ref-eckertParallelDistParallelDistance2022" class="csl-entry" role="listitem">
+Eckert A (2022) <span class="nocase">parallelDist</span>: <span>Parallel</span> distance matrix computation using multiple threads
+</div>
+<div id="ref-eeaEUHydroRiverNetwork2019" class="csl-entry" role="listitem">
+EEA (2019) <a href="https://doi.org/10.2909/393359a7-7ebd-4a52-80ac-1a18d5f3db9c"><span>EU-Hydro</span> – <span>River Network Database</span></a>
+</div>
+<div id="ref-eeaPotentialFloodproneArea2020" class="csl-entry" role="listitem">
+EEA (2020) Potential flood-prone area extent
+</div>
+<div id="ref-evansUsesMapNatural2005" class="csl-entry" role="listitem">
+Evans D (2005) Some <span>Uses</span> of the <span>Map</span> of the <span>Natural Vegetation</span> of <span>Europe</span> for <span>Natura</span> 2000. Application and Analysis of the Map of the Natural Vegetation of Europe 195–204
+</div>
+<div id="ref-gastonPatternProcessMacroecology2000" class="csl-entry" role="listitem">
+Gaston KJ, Blackburn TM (2000) Pattern and process in macroecology. Blackwell Science, Oxford, England; Malden, Massachusets, USA
+</div>
+<div id="ref-gelmanPosteriorPredictiveAssessment1996" class="csl-entry" role="listitem">
+Gelman A, Meng X-L, Stern H (1996) <a href="https://www.jstor.org/stable/24306036">Posterior <span>Predictive Assessment</span> of <span>Model Fitness Via Realized Discrepancies</span></a>. Statistica Sinica 6:733–760
+</div>
+<div id="ref-gelmanInferenceIterativeSimulation1992" class="csl-entry" role="listitem">
+Gelman A, Rubin DB (1992) Inference from iterative simulation using multiple sequences. Statistical science 7:457–472
+</div>
+<div id="ref-gotelliNULLMODELANALYSIS2000" class="csl-entry" role="listitem">
+Gotelli NJ (2000) <span>NULL MODEL ANALYSIS OF SPECIES CO-OCCURRENCE PATTERNS</span>. Ecology 81:2606–2621. <a href="https://doi.org/10.1890/0012-9658(2000)081[2606:NMAOSC]2.0.CO;2">https://doi.org/10.1890/0012-9658(2000)081[2606:NMAOSC]2.0.CO;2</a>
+</div>
+<div id="ref-gotelliEcoSimRNullModel2015" class="csl-entry" role="listitem">
+Gotelli NJ, Hart EM, Ellison AM (2015) <span>EcoSimR</span>: <span>Null</span> model analysis for ecological data. R package version 01 0 10:
+</div>
+<div id="ref-hanleyMeaningUseArea1982" class="csl-entry" role="listitem">
+Hanley JA, McNeil BJ (1982) The meaning and use of the area under a receiver operating characteristic (<span>ROC</span>) curve. Radiology 143:29–36. <a href="https://doi.org/10.1148/radiology.143.1.7063747">https://doi.org/10.1148/radiology.143.1.7063747</a>
+</div>
+<div id="ref-hoeghEvaluatingPresentingUncertainty2020" class="csl-entry" role="listitem">
+Hoegh A, Roberts DW (2020) Evaluating and presenting uncertainty in model-based unconstrained ordination. Ecology and Evolution 10:59–69. <a href="https://doi.org/10.1002/ece3.5752">https://doi.org/10.1002/ece3.5752</a>
+</div>
+<div id="ref-huiZetaDiversityConcept2014" class="csl-entry" role="listitem">
+Hui C, McGeoch MA (2014) Zeta <span>Diversity</span> as a <span>Concept</span> and <span>Metric That Unifies Incidence-Based Biodiversity Patterns</span>. The American Naturalist 184:684–694. <a href="https://doi.org/10.1086/678125">https://doi.org/10.1086/678125</a>
+</div>
+<div id="ref-illiesLimnofaunaEuropaea1978" class="csl-entry" role="listitem">
+Illies J (1978) Limnofauna europaea. Fischer Stuttgart
+</div>
+<div id="ref-jupkeEuropeanRiverTypologies2023" class="csl-entry" role="listitem">
+Jupke JF, Birk S, Apostolou A, et al (2023) European river typologies fail to capture diatom, fish, and macrophyte community composition. Science of The Total Environment 896:165081. <a href="https://doi.org/10.1016/j.scitotenv.2023.165081">https://doi.org/10.1016/j.scitotenv.2023.165081</a>
+</div>
+<div id="ref-kauffmanFindingGroupsData1990" class="csl-entry" role="listitem">
+Kauffman L, Rousseeuw P (1990) Finding <span>Groups</span> in data: <span>An Introduction</span> to <span>Cluster Analysis</span>. John Wiley &amp; Sons Inc, Hoboken, New Jerse
+</div>
+<div id="ref-khanalBenthicMacroinvertebrateAssemblages2025" class="csl-entry" role="listitem">
+Khanal GP, Hartmann A, Leitner P, et al (2025) Benthic macroinvertebrate assemblages foster the ecoregional approach in near-natural streams of the <span>Bhutan Himalaya</span>. Hydrobiologia. <a href="https://doi.org/10.1007/s10750-025-05995-y">https://doi.org/10.1007/s10750-025-05995-y</a>
+</div>
+<div id="ref-koppJointSpeciesDistribution2023" class="csl-entry" role="listitem">
+Kopp D, Stoddard JL, Hill R, et al (2023) Joint species distribution models reveal taxon-specific sensitivities to potential anthropogenic alteration. Freshwater Science 726283. <a href="https://doi.org/10.1086/726283">https://doi.org/10.1086/726283</a>
+</div>
+<div id="ref-kuhnTidymodelsCollectionPackages2020" class="csl-entry" role="listitem">
+Kuhn M, Wickham H (2020) Tidymodels: A collection of packages for modeling and machine learning using tidyverse principles.
+</div>
+<div id="ref-kurtzerSingularityScientificContainers2017" class="csl-entry" role="listitem">
+Kurtzer GM, Sochat V, Bauer MW (2017) Singularity: <span>Scientific</span> containers for mobility of compute. PLOS ONE 12:e0177459. <a href="https://doi.org/10.1371/journal.pone.0177459">https://doi.org/10.1371/journal.pone.0177459</a>
+</div>
+<div id="ref-latombeZetadivPackageComputing2018" class="csl-entry" role="listitem">
+Latombe G, McGeoch MA, Nipperess DA, Hui C (2018) Zetadiv : An <span>R</span> package for computing compositional change across multiple sites, assemblages or cases. Ecology
+</div>
+<div id="ref-linkeGlobalHydroenvironmentalSubbasin2019" class="csl-entry" role="listitem">
+Linke S, Lehner B, Ouellet Dallaire C, et al (2019) Global hydro-environmental sub-basin and river reach characteristics at high spatial resolution. Scientific Data 6:283. <a href="https://doi.org/10.1038/s41597-019-0300-6">https://doi.org/10.1038/s41597-019-0300-6</a>
+</div>
+<div id="ref-liuIsolationForest2008" class="csl-entry" role="listitem">
+Liu FT, Ting KM, Zhou Z-H (2008) Isolation forest. In: 2008 <span>Eighth IEEE International Conference</span> on <span>Data Mining</span>. IEEE, pp 413–422
+</div>
+<div id="ref-lychesolheimNewBroadTypology2019" class="csl-entry" role="listitem">
+Lyche Solheim A, Globevnik L, Austnes K, et al (2019) A new broad typology for rivers and lakes in <span>Europe</span>: <span>Development</span> and application for large-scale environmental assessments. Science of The Total Environment 697:134043. <a href="https://doi.org/10.1016/j.scitotenv.2019.134043">https://doi.org/10.1016/j.scitotenv.2019.134043</a>
+</div>
+<div id="ref-maierJustifyYourAlpha2022" class="csl-entry" role="listitem">
+Maier M, Lakens D (2022) Justify <span>Your Alpha</span>: <span>A Primer</span> on <span>Two Practical Approaches</span>. Advances in Methods and Practices in Psychological Science 5:1–14
+</div>
+<div id="ref-mantelDetectionDiseaseClustering1967" class="csl-entry" role="listitem">
+Mantel N (1967) The detection of disease clustering and a generalized regression approach. Cancer research 27:209–220
+</div>
+<div id="ref-messagerEstimatingVolumeAge2016" class="csl-entry" role="listitem">
+Messager ML, Lehner B, Grill G, et al (2016) Estimating the volume and age of water stored in global lakes using a geo-statistical approach. Nature Communications 7:13603. <a href="https://doi.org/10.1038/ncomms13603">https://doi.org/10.1038/ncomms13603</a>
+</div>
+<div id="ref-metzgerClimaticStratificationEnvironment2005" class="csl-entry" role="listitem">
+Metzger MJ, Bunce RGH, Jongman RHG, et al (2005) A climatic stratification of the environment of <span>Europe</span>: <span>A</span> climatic stratification of the <span>European</span> environment. Global Ecology and Biogeography 14:549–563. <a href="https://doi.org/10.1111/j.1466-822X.2005.00190.x">https://doi.org/10.1111/j.1466-822X.2005.00190.x</a>
+</div>
+<div id="ref-microsoftForeachProvidesForeach2022" class="csl-entry" role="listitem">
+Microsoft, Weston S (2022) Foreach: <span>Provides</span> foreach looping construct
+</div>
+<div id="ref-nikuGllvmFastAnalysis2019" class="csl-entry" role="listitem">
+Niku J, Hui FKC, Taskinen S, Warton DI (2019) Gllvm: <span>Fast</span> analysis of multivariate abundance data with generalized linear latent variable models in <span><span class="smallcaps">r</span></span>. Methods in Ecology and Evolution 10:2173–2182. <a href="https://doi.org/10.1111/2041-210X.13303">https://doi.org/10.1111/2041-210X.13303</a>
+</div>
+<div id="ref-oksanenVeganCommunityEcology2022" class="csl-entry" role="listitem">
+Oksanen J, Simpson GL, Blanchet FG, et al (2022) Vegan: <span>Community</span> ecology package
+</div>
+<div id="ref-ouelletdallaireMultidisciplinaryFrameworkDerive2019" class="csl-entry" role="listitem">
+Ouellet Dallaire C, Lehner B, Sayre R, Thieme M (2019) A multidisciplinary framework to derive global river reach classifications at high spatial resolution. Environmental Research Letters 14:024003. <a href="https://doi.org/10.1088/1748-9326/aad8e9">https://doi.org/10.1088/1748-9326/aad8e9</a>
+</div>
+<div id="ref-ovaskainenJointSpeciesDistribution2020" class="csl-entry" role="listitem">
+Ovaskainen O, Abrego N (2020) Joint <span>Species Distribution Modelling</span>. Cambridge University Press, Cambridge, United Kingdom
+</div>
+<div id="ref-panagosGlobalRainfallErosivity2023" class="csl-entry" role="listitem">
+Panagos P, Hengl T, Wheeler I, et al (2023) Global rainfall erosivity database (<span>GloREDa</span>) and monthly <span class="nocase">R-factor</span> data at 1&nbsp;km spatial resolution. Data in Brief 50:109482. <a href="https://doi.org/10.1016/j.dib.2023.109482">https://doi.org/10.1016/j.dib.2023.109482</a>
+</div>
+<div id="ref-panagosEuropeanSoilData2022" class="csl-entry" role="listitem">
+Panagos P, Van Liedekerke M, Borrelli P, et al (2022) European <span>Soil Data Centre</span> 2.0: <span>Soil</span> data and knowledge in support of the <span>EU</span> policies. European Journal of Soil Science 73:e13315. <a href="https://doi.org/10.1111/ejss.13315">https://doi.org/10.1111/ejss.13315</a>
+</div>
+<div id="ref-pebesmaSimpleFeaturesStandardized2018" class="csl-entry" role="listitem">
+Pebesma E (2018) Simple <span>Features</span> for <span>R</span>: <span>Standardized Support</span> for <span>Spatial Vector Data</span>. The R Journal 10:439–446. <a href="https://doi.org/10.32614/RJ-2018-009">https://doi.org/10.32614/RJ-2018-009</a>
+</div>
+<div id="ref-pharaohPotentialDriversChanging2024" class="csl-entry" role="listitem">
+Pharaoh E, Diamond M, Jarvie HP, et al (2024) Potential drivers of changing ecological conditions in <span>English</span> and <span>Welsh</span> rivers since 1990. Science of The Total Environment 946:174369. <a href="https://doi.org/10.1016/j.scitotenv.2024.174369">https://doi.org/10.1016/j.scitotenv.2024.174369</a>
+</div>
+<div id="ref-pinkertPotentialEcoregionalRange2023" class="csl-entry" role="listitem">
+Pinkert S, Sica YV, Winner K, Jetz W (2023) The potential of ecoregional range maps for boosting taxonomic coverage in ecology and conservation. Ecography e06794. <a href="https://doi.org/10.1111/ecog.06794">https://doi.org/10.1111/ecog.06794</a>
+</div>
+<div id="ref-plummerCODAConvergenceDiagnosis2006" class="csl-entry" role="listitem">
+Plummer M, Best N, Cowles K, Vines K (2006) <span>CODA</span>: <span>Convergence</span> diagnosis and output analysis for <span>MCMC</span>. R News 6:7–11
+</div>
+<div id="ref-popovicFourPrinciplesImproved2024" class="csl-entry" role="listitem">
+Popovic G, Mason TJ, Drobniak SM, et al (2024) Four principles for improved statistical ecology. Methods in Ecology and Evolution 2041–210X.14270. <a href="https://doi.org/10.1111/2041-210X.14270">https://doi.org/10.1111/2041-210X.14270</a>
+</div>
+<div id="ref-rahmanAcceleratingJointSpecies2024" class="csl-entry" role="listitem">
+Rahman AU, Tikhonov G, Oksanen J, et al (2024) Accelerating joint species distribution modelling with <span>Hmsc-HPC</span> by <span>GPU</span> porting. PLOS Computational Biology 20:e1011914. <a href="https://doi.org/10.1371/journal.pcbi.1011914">https://doi.org/10.1371/journal.pcbi.1011914</a>
+</div>
+<div id="ref-robertsLabdsvOrdinationMultivariate2023" class="csl-entry" role="listitem">
+Roberts DW (2023) Labdsv: <span>Ordination</span> and multivariate analysis for ecology
+</div>
+<div id="ref-robertsPackageLabdsv2007" class="csl-entry" role="listitem">
+Roberts DW (2007) R package labdsv
+</div>
+<div id="ref-simonsohnGroundhogVersioncontrolCRAN2025" class="csl-entry" role="listitem">
+Simonsohn U, Gruson H (2025) Groundhog: <span class="nocase">Version-control</span> for <span>CRAN</span>, <span>GitHub</span>, and <span>GitLab</span> packages
+</div>
+<div id="ref-stoneCheckerboardScoreSpecies1990" class="csl-entry" role="listitem">
+Stone L, Roberts A (1990) The checkerboard score and species distributions. Oecologia 85:74–79. <a href="https://doi.org/10.1007/BF00317345">https://doi.org/10.1007/BF00317345</a>
+</div>
+<div id="ref-szoszkiewiczMacrophyteIndexRivers2019" class="csl-entry" role="listitem">
+Szoszkiewicz K, Jusik S, Pietruczuk K, Gebler D (2019) The <span>Macrophyte Index</span> for <span>Rivers</span> (<span>MIR</span>) as an <span>Advantageous Approach</span> to <span>Running Water Assessment</span> in <span>Local Geographical Conditions</span>. Water 12:108. <a href="https://doi.org/10.3390/w12010108">https://doi.org/10.3390/w12010108</a>
+</div>
+<div id="ref-tikhonovHmscHierarchicalModel2022" class="csl-entry" role="listitem">
+Tikhonov G, Ovaskainen O, Oksanen J, et al (2022) Hmsc: <span>Hierarchical</span> model of species communities
+</div>
+<div id="ref-tjurCoefficientsDeterminationLogistic2009" class="csl-entry" role="listitem">
+Tjur T (2009) Coefficients of <span>Determination</span> in <span>Logistic Regression Models</span>—<span>A New Proposal</span>: <span>The Coefficient</span> of <span>Discrimination</span>. The American Statistician 63:366–372. <a href="https://doi.org/10.1198/tast.2009.08210">https://doi.org/10.1198/tast.2009.08210</a>
+</div>
+<div id="ref-tothNewGenerationHydraulic2015" class="csl-entry" role="listitem">
+Tóth B, Weynants M, Nemes A, et al (2015) New generation of hydraulic pedotransfer functions for <span>Europe</span>. European Journal of Soil Science 66:226–238. <a href="https://doi.org/10.1111/ejss.12192">https://doi.org/10.1111/ejss.12192</a>
+</div>
+<div id="ref-valleSpeciesAssociationsJoint2023" class="csl-entry" role="listitem">
+Vallé C, Poggiato G, Thuiller W, et al (2023) Species associations in joint species distribution models: From missing variables to conditional predictions. Journal of Biogeography jbi.14752. <a href="https://doi.org/10.1111/jbi.14752">https://doi.org/10.1111/jbi.14752</a>
+</div>
+<div id="ref-vansickleUsingMeanSimilarity1997" class="csl-entry" role="listitem">
+Van Sickle J (1997) Using <span>Mean Similarity Dendrograms</span> to <span>Evaluate Classifications</span>. Journal of Agricultural, Biological, and Environmental Statistics 2:370–388. <a href="https://doi.org/10.2307/1400509">https://doi.org/10.2307/1400509</a>
+</div>
+<div id="ref-wangMvabundStatisticalMethods2022" class="csl-entry" role="listitem">
+Wang Y, Naumann U, Eddelbuettel D, et al (2022) <a href="https://doi.org/10.32614/CRAN.package.mvabund">Mvabund: <span>Statistical</span> methods for analysing multivariate abundance data</a>
+</div>
+<div id="ref-wangMvabundPackageModelbased2012" class="csl-entry" role="listitem">
+Wang Y, Naumann U, Wright ST, Warton DI (2012) Mvabund - an <span>R</span> package for model-based analysis of multivariate abundance data: <span><em>The</em></span> mvabund <span>R</span> package. Methods in Ecology and Evolution 3:471–474. <a href="https://doi.org/10.1111/j.2041-210X.2012.00190.x">https://doi.org/10.1111/j.2041-210X.2012.00190.x</a>
+</div>
+<div id="ref-wassonEuropeanHydroEcoregions2007" class="csl-entry" role="listitem">
+Wasson J-G, Chandesris A, Garcia-Bautista A, et al (2007) European <span>Hydro-Ecoregions</span>
+</div>
+<div id="ref-westfallResamplingbasedMultipleTesting1993" class="csl-entry" role="listitem">
+Westfall P, Young S (1993) Resampling-based multiple testing: <span>Examples</span> and methods for p-<span>Value</span> adjustment. Wiley
+</div>
+<div id="ref-wulffHowWhyAlpha2023" class="csl-entry" role="listitem">
+Wulff JN, Taylor L (2023) How and why alpha should depend on sample size: <span class="nocase">A Bayesian-frequentist</span> compromise for significance testing. PsyArXiv
+</div>
+<div id="ref-yangWhyFunctionalTraits2018" class="csl-entry" role="listitem">
+Yang J, Cao M, Swenson NG (2018) Why <span>Functional Traits Do Not Predict Tree Demographic Rates</span>. Trends in Ecology &amp; Evolution 33:326–336. <a href="https://doi.org/10.1016/j.tree.2018.03.003">https://doi.org/10.1016/j.tree.2018.03.003</a>
+</div>
+</div></section></div></main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

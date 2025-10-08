@@ -1,10 +1,17 @@
 ################################################################################
-# Script Name:        build_hmsc_models.R
-# Description:        This R script is designed to fit Hierarchical Model of Species Communities (HMSC) models
-#                       It starts out by loading data sets with different biota (prepared in scripts 01-03) and the corresponding sampling schemes (defined in 04_define_schemes_biota.R).
-#                       The code still contains all code necessary to replace MEM with AEM. However, the spatial scale of almost all data sets is to large to allow for AEM. 
-#                       Computational demand becomes exceedingly large. 
+# Script Name:        build_hmsc_hpc_models.R
+# Description:        Variation of the build_hmsc_models.R script that builds models specifically for the HMSC-HPC version.
+#                     See github: https://github.com/hmsc-r/hmsc-hpc and paper: https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1011914                      
 #
+#                     This script always represents the start of a model fitting iteration. 
+#                     This iteration goes through multiple stages:
+#                       1. creating the unfitted models and initialized models. 
+#                       2. fitting the initialized models with Hmsc-HPC on server resulting in fitted models 
+#                       3. evaluating fitted models. 
+#                               |--- If they pass, they are saved in converged_models. 
+#                               |--- If they fail, they are their entry in mcmc_parameters.rds is updated 
+#                       4. Start again here. Refit all models that failed in 3. 
+
 # Author:             Jonathan Jupke
 # Date Created:       2025-09-16
 # Last Modified:      2025-09-16
@@ -12,7 +19,7 @@
 # R Version:          R 4.5.1
 # Required Packages:  data.table, lubridate, sf, Hmsc, adespatial
 #
-# Notes:              
+# Notes:              This script is run locally. It is not computationally intensive. 
 ################################################################################
 
 ## DEFINED VARAIBLES ----- 
@@ -31,18 +38,27 @@ library(lubridate)
 library(sf)
 library(Hmsc)
 library(adespatial)
+library(jsonify)
 
 # load custom functions ---------------------------------------------------
 source("code/functions/determine_spatial_scale.R")
 
-# load and prepare data ---------------------------------------------------
+
+# data input ---------------------------------------------------
 files        <- list.files("data/biota", pattern = "02_", full.names = TRUE)
-files <- files[1]
 schemes      <- list.files("data/biota", pattern = "03_", full.names = TRUE)
-schemes <- schemes[1]
 bio.list     <- lapply(files, readRDS)
 schemes.list <- lapply(schemes, readRDS)
+mcmcPar      <- readRDS("data/mcmc_parameters.rds")
+if ("changes_for_refit.rds" %in% list.files("data")) varTodrop <- readRDS("data/changes_for_refit.rds")
 
+# empty all folders that are part of the loop described above. 
+# unlink("data/fitted_hmsc_models/*")
+# unlink("data/unfitted_hmsc_models/*")
+# unlink("data/initialized_hmsc_models/*")
+
+
+# prepare fitting  --------------------------------------------------------
 bio.names    <- 
         sapply(
                 files, 
@@ -53,25 +69,33 @@ bio.names    <-
         )
 
 
-
-# LOOPS -------------------------------------------------------------------
-# The first loop over b loops over the taxonomic groups diatoms, fish, invertebrates, and macrophytes
+# Prepare models  -------------------------------------------------------------------
+# The first loop over b, loops over the taxonomic groups diatoms, fish, invertebrates, and macrophytes. 
+# In that order.
+# TODO describe what happens in it
 for (b in 1:length(bio.names)){
-        
+        if (b < 4) next()
         # select list of sampling schemes for focal taxonomic group from schemes.list 
         b.scheme <- schemes.list[[b]]
         # select sample data for focal taxonomic group
         b.bio    <- bio.list[[b]]
         
-        # The + in the names of some diatom complexes causes errors
-        # It is removed 
+        # The + in the names of some diatom complexes causes errors later on.
+        # The + is removed from the names. 
         if (b == 1) b.bio[, working.taxon := gsub(x = working.taxon, pattern = "\\+", replacement = "")]
         
-        # This loop is nested in b and loops over sampling schemes 
-        #for (o in 1:nrow(b.scheme)) {
+        # This loop is nested in b and loops over o, i.e., sampling schemes. 
+        # These are the rows of b.scheme
         for (o in 1:nrow(b.scheme)) {
                 
-                if(o > 20) next
+                
+                # select sampling scheme 
+                o.scheme <- b.scheme[o, ]
+                # IF this model was already successfully fit skip it 
+                o.par    <- mcmcPar[scheme_id == o.scheme$scheme_id] 
+                if (o.par$converged) next()
+                
+                if(o > 5) next
                 # TODO DEBUG CODE DELETE FOR GITHUB 
                 #if (b == 1 & o == 1) next()
                 
@@ -91,14 +115,19 @@ for (b in 1:length(bio.names)){
                 o.data   <- b.bio[data.set == o.scheme$data.set & 
                                         eventYear == o.scheme$eventYear & 
                                         month(eventDate) %in% as.numeric(o.scheme$focal_months[[1]])]
+                # select MCMC parameters 
+                o.para <- mcmcPar[scheme_id == o.scheme$scheme_id]
                 
                 # sample data according to scheme
-                o.sample.ids <- sample(
-                        x       = unique(o.data$eventID),
-                        size    = o.scheme$samples,
-                        replace = F
-                )
-                o.data <- o.data[eventID %in% o.sample.ids]
+                if (o.scheme$sample_type != "full"){
+                        
+                        o.sample.ids <- sample(
+                                x       = unique(o.data$eventID),
+                                size    = o.scheme$samples,
+                                replace = F
+                        )
+                        o.data <- o.data[eventID %in% o.sample.ids]
+                } 
                 
                 #- Remove rare taxa (less that 5 sites in total)
                 #- Such a low number of occurrences would render the model inaccurate
@@ -274,7 +303,7 @@ for (b in 1:length(bio.names)){
                 
                 # Prepare HMSC model 
                 #- establish a site level random factor
-                o.studyDesign <- data.frame(sample = as.factor(1:o.scheme$samples))
+                o.studyDesign <- data.frame(sample = as.factor(1:nrow(o.data3)))
                 o.rL          <- HmscRandomLevel(units = o.studyDesign$sample)
                 
                 #- create model formula
@@ -305,9 +334,24 @@ for (b in 1:length(bio.names)){
                                 
                         )   
                 }
-                #oo <- ifelse(o < 10, paste0("0",o), as.character(o))
                 o.save.name <-paste0("data/unfitted_hmsc_models/", bio.names[b], "_", o.scheme.number,".rds")
                 saveRDS(o.mod1, o.save.name)
+                # This step is the main difference to using vanilla Hmsc.
+                # We initialize the model without fitting it. 
+                # This is forced by the engine = "HPC" argument.
+                o.init_obj = sampleMcmc(
+                        o.mod1,
+                        samples = o.para$nSamples,
+                        thin = o.para$thin,
+                        transient = o.para$transient,
+                        nChains = o.para$nChains,
+                        verbose = 100,
+                        engine = "HPC"
+                )
+               
+                o.init_obj <- to_json(o.init_obj)
+                o.save.name <-paste0("data/initialized_hmsc_models/", bio.names[b], "_", o.scheme.number,".rds")
+                saveRDS(o.init_obj, o.save.name)
                 rm(list = ls()[grepl("^o\\.", x = ls())])
         }
 }

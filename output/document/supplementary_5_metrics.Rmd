@@ -75,7 +75,7 @@ Since multiple tests are performed (one for each taxon), the resulting p-values 
 Two metrics evaluate the overall quality of the typology system:
 1. The proportion of significant indicator taxa (at $\alpha = 0.05$), denoted as $N_{sig}$:
 $$N_{sig}=\frac{1}{H}\sum_{h=1}{H}I(p_h<0.05)$$
-where $I()$ is the indicator function, $H$ the number of species and $p_h$ is the adjusted p-value for taxon $h$. 
+where $I()$ is the indicator function, $H$ the number of species and $p_h$ is the adjusted $p$-value for taxon $h$. 
 2. The mean adjusted p-value across all taxon-type combinations:
 $$\bar{p} = \frac{1}{H} \sum_{h=1}^H p_h$$
 

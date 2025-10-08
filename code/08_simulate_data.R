@@ -1,131 +1,213 @@
-# Simulate new data
-#' Explantion of variables and functions
-#' VARIABLES
-# setup ------------------------------------------------------------------
-# library(groundhog)
-# pkgs <- c(
-#         "cluster",
-#         "data.table",
-#         "dplyr",
-#         "fs",
-#         "Hmsc",
-#         "kernlab",
-#         "vegclust",
-#         "magrittr",
-#         "purrr",
-#         "stringr"
+################################################################################
+# Script Name:        simulate_data.R
+# Description:        Short description of the script
 #
-# )
-# groundhog.library(pkgs,'2024-12-01')
-# rm(pkgs)
+# Author:             Jonathan Jupke
+# Date Created:       2025-09-15
+# Last Modified:      2025-09-22
+#
+# R Version:          R 4.5.1
+# Required Packages: data.table, kernlab, cluster, vegclust, Hmsc, isotree
+#
+# Notes:             
+################################################################################
 
+
+# setup -------------------------------------------------------------------
+setwd(rstudioapi::getActiveProject())
+
+# libraries  --------------------------------------------------------------
 library(data.table)
 library(kernlab)
 library(cluster)
 library(vegclust)
 library(Hmsc)
-setwd(rstudioapi::getActiveProject())
+library(isotree)
+
+# scripts -----------------------------------------------------------------
 source("code/parameters/run_parameters.R")
-# setup loop ------------------------------------------------------------------------
-model.files <- list.files(paste0("data/fitted_hmsc_models/"), full.names = T)
-vp.files    <- list.files(paste0("data/variation_partitioning/"), full.names = T)
-spatial.scale <- list.files(paste0("data/spatial_scale/"), full.names = T)
 source("code/functions/balance_clusters.R")
 source("code/functions/normalized_partitioning_entropy.R")
+
+# load files ------------------------------------------------------------------------
+model.files   <- list.files("data/converged_hmsc_models/", full.names = T)
+vp.files      <- list.files("data/variation_partitioning/", full.names = T)
+spatial.scale <- list.files("data/spatial_scale/", full.names = T)
+schemes       <- list.files("data/biota", full.names = T)
+
+schemes <- schemes[grepl("03", schemes)]
+schemes <- lapply(schemes, readRDS)
+schemes <- rbindlist(schemes)
+#names(schemes) <- c("diatoms", "fish", "invertebrates", "macrophytes")
+
+isomaha <- readRDS("data/isomaha.rds")
+mcmcPar <- readRDS("data/mcmc_parameters.rds")
+
+
+
 set.seed(1)
 # Loop ------------------------------------------------------------------------------
-# this could be parallelized
-for (i in 1:length(model.files)) {
-        #- Print Status Update to console
-        print(paste("i =", i))
+
+for (i in 1) {
         
-        #- extract taxon from model name
-        i.taxon <- sub(x = model.files[i],
-                       pattern = "data/fitted_hmsc_models/",
-                       replacement = "")
-        i.taxon <- sub(x = i.taxon        ,
-                       pattern = "_.*\\.rds",
-                       replacement = "")
+
+        
+        # load the model file
+        i.model <- readRDS(model.files[i])
+        #TODO remove 
+        fit.model    <- readRDS(model.files[i])[[1]]
+        fit.model    <- try(from_json(fit.model))
+        unfittedModel <- readRDS("data/unfitted_hmsc_models/fish_0006.rds")
+        
+        # extract model name 
+        model.name <- gsub(pattern="data/converged_hmsc_models//","", model.files[i])
+        model.name <- gsub(pattern="data/converged_hmsc_models/","", model.name)
+        model.name <- gsub(pattern="\\.rds", "", model.name)
+        
+        #  Print Status Update to console
+        print(paste(model.name))
         
         
-        #- Prepare list to store results of loop
+        # select the corresponding scheme 
+        i.schemes <- schemes[scheme_id == model.name]
+        
+        # select the corresponding parameter set 
+        i.para <- mcmcPar[scheme_id == model.name]
+        
+        
+        postList = fit.model[1:i.para$nChains]
+        fitTF = importPosteriorFromHPC(
+                m = unfittedModel,  # the Hmsc object containing the unfitted model
+                postList = postList, 
+                nSamples = i.para$nSamples, 
+                thin = i.para$thin, 
+                transient = i.para$transient)
+        
+
+        
+        # input in spatial scale for additional information
+        #i.ss <- grep(x = spatial.scale, pattern = model.name)
+        #i.ss <- readRDS(spatial.scale[i])
+                
+        
+        #  Load the results of the variation partitioning
+        # i.vp   <- readRDS(vp.files[i])
+        
+       #  check if the model is any good (i.e. Median AUC > 0.75) 
+        # if ("C.SR2" %in% names(i.vp$MF)){
+        #         if (!median(i.vp$MF$O.AUC) > 0.75) next()
+        # } else {
+        #         if (!median(i.vp$MF$O.AUC) > 0.75) next()
+        # }
+
+        #  Prepare list to store results of loop
         i.out <- vector(mode = "list", length = length(n_types))
         
-        ## Verify that the names are the same
-        if (sub(x = model.files[i],
-                pattern = "data/fitted_hmsc_models/",
-                replacement = "") != sub(x = vp.files[i],
-                pattern = "data/variation_partitioning/",
-                replacement = "")
-            ) {
-                stop(paste("loaded files have different names in", i))
-        }
+        # ## Verify that the names are the same
+        # if (sub(x = model.files[i],
+        #         pattern = "data/fitted_hmsc_models/",
+        #         replacement = "") != sub(x = vp.files[i],
+        #         pattern = "data/variation_partitioning/",
+        #         replacement = "")
+        #     ) {
+        #         stop(paste("loaded files have different names in", i))
+        # }
         
-        #- Load model results
-        i.model <- readRDS(model.files[i])
-        #- Load the results of the variation partitioning
-        i.vp   <- readRDS(vp.files[i])
+        # #  Load model results
+        # i.model <- readRDS(model.files[i])
         
-        #- Extract name of model
-        i.model.name <- sub("data/fitted_hmsc_models/", "", model.files[i])
+        # convergence_state = i.model$converged
+        # i.model <- i.model$model
+        #  Extract name of model
+        # i.model.name <- sub("data/fitted_hmsc_models/", "", model.files[i])
         
         
-        #- Extract number of samples in model
-        i.nrow  <- nrow(i.model[[2]])
-        #- Which variables follow the typology?
-        #- Here we make 5 subsets which contain: Four times random assortments and one time
-        #- all variables.
-        #- The strength of the typology is partly determined by how important the variables are.
-        #- This is measured by the fraction of VP scores captured by the included variables.
-        #- These vectors hold information on the simulations
+        #  Extract number of samples in model
+        # i.nrow  <- nrow(i.model[[2]])
+        #  Which variables follow the typology?
+        #  Here we make 5 subsets which contain: Four times random assortments and one time
+        #  all variables.
+        #  The strength of the typology is partly determined by how important the variables are.
+        #  This is measured by the fraction of VP scores captured by the included variables.
+        #  These vectors hold information on the simulations
         i.n.variables <-
                 i.contraction.points <-
                 i.contraction.centroids <-
                 i.importance  <-
                 i.nc  <-
+                i.npe <-
                 i.asw <- c()
         
-        i.cluster.assignments <- list()
+        i.cluster.assignments <- 
         i.fuzzy.assignments   <- list()
         
         #  — — — NEW PREDCICTOR VALUES  —  —  —  —
-        #- extract predictor names
-        i.all.vars1 <- colnames(i.model$XData)[-c(1, which(colnames(i.model$XData) == "."))]
-        #- remove spatial predictors (MEM = MORANS EIGENVECTOR MAPS)
-        i.all.vars1 <- i.all.vars1[!grepl("MEM|AEM", i.all.vars1)]
-        #- create a list to store the results of different predictor variable sets
+        #  extract predictor names
+        i.all.vars1 <- colnames(i.model$XData)
+        if (any (colnames(i.model$XData) == ".")){
+                i.all.vars1 <- i.all.vars1[-which(colnames(i.model$XData) == ".")]
+        }
+        #  remove spatial predictors (MEM = MORANS EIGENVECTOR MAP)
+        i.all.vars1 <- i.all.vars1[!grepl("MEM", i.all.vars1)]
+        
+        #  sort i.all.vars alphabetically. This matters for assigning the correct probabilities
+        #  in the sampling. 
+        i.all.vars1 <- sort(i.all.vars1)
+
+        
+        #  create a list to store the results of different predictor variable sets
         i.predictions <- list()
         
-        #- START LOOP OVER Q, varies the number of variables that
-        #- follow the typology
+        #  Create a names vector to store how often each variable has been included in the artificial typologies. 
+        #  The probability that any variable is chosen is inversely proportional to the number of times it has been included
+        #  In successful artificial typologies. 
+        
+        i.variable.counter <- rep(1, length(i.all.vars1))
+        # if (!"glacial_area" %in% i.all.vars1) i.variable.counter <- i.variable.counter[-1]
+        # if (!"mean_snow_equivalent" %in% i.all.vars1) i.variable.counter <- i.variable.counter[-1]
+        
+        names(i.variable.counter) <- i.all.vars1
+        #  START LOOP OVER Q, varies the number and identity of variables that
+        #  follow the typology
         for (q in 1:max.q) {
-                print(paste("model ", i, "run ", q))
+                
+                if (q == 1) i.success <- 0
+                if (i.success > 200) next()
+                print(paste(q, i.success))
+                #print(paste("model ", i, "run ", q))
+                
+                # set up probabilities 
+                q.prob <- 1 / i.variable.counter
+                
                 
                 # How many variables are included in this subset?
                 # This is a random draw
                 q.nvariables <- sample(x = 3:(length(i.all.vars1) - 1), size = 1)
-                # Add number to vector for later reference
-                i.n.variables <- append(i.n.variables, q.nvariables)
-                # Which variables are included
-                # This is a random sample from all variables
+                # Which variables are included? This is a random sample from all variables
                 q.all.vars   <- sample(i.all.vars1,
                                        size = q.nvariables,
-                                       replace = F)
+                                       replace = F, 
+                                       prob = q.prob)
+                # if any of the geology variables are included, all must be included. 
+                if (("area_calcareous" %in% q.all.vars | "area_sediment" %in% q.all.vars | "area_siliceous" %in% q.all.vars & 
+                     !all(c("area_calcareous", "area_sediment", "area_siliceous") %in% q.all.vars))){
+                        if (! "area_calcareous" %in% q.all.vars) q.all.vars <- append(q.all.vars, "area_calcareous")
+                        if (! "area_sediment" %in% q.all.vars)   q.all.vars <- append(q.all.vars, "area_sediment")
+                        if (! "area_siliceous" %in% q.all.vars)  q.all.vars <- append(q.all.vars, "area_siliceous")
+                }
+                
+                
+
                 # all variables that do not follow the typology
                 q.missing  <- i.all.vars1[which(!i.all.vars1 %in% q.all.vars)]
                 
-                # At this point we can already determine the typology
-                # strength as judged by the selection of variables.
-                q.importance <- sum(i.vp$importance[q.all.vars])
-                i.importance <- append(i.importance, q.importance)
-                
-                #- Extract original environmental variables from HMSC model
+                #  Extract original environmental variables from HMSC model
                 q.env <- copy(i.model$XData)
                 if ("." %in% names(q.env)) {
                         q.env <- q.env[, -which(names(q.env) == ".")]
                 }
-                #- Create a classification of sites based on the selected
-                #- environmental variables
+                #  Create a classification of sites based on the selected
+                #  environmental variables
                 q.cluster.env <- copy(q.env)
                 q.cluster.env <- as.matrix(as.data.frame(q.cluster.env[, q.all.vars]))
                 # find optimal k means clustering
@@ -183,34 +265,40 @@ for (i in 1:length(model.files)) {
                         q.clusters <- q.clusters$cluster
                 }
                 
-                #                 q.type <- specc(x       = q.cluster.env, centers = j.types)
-                #                 q.clusters <- balance_clusters(
-                #                         data    = q.cluster.env,
-                #                         clusters = q.type@.Data,
-                #                         min_size = nrow(q.cluster.env) / j.types * 0.75
-                #                 )
                 
-                
-                #- store cluster assignment for later
-                i.cluster.assignments[[length(i.cluster.assignments) + 1]] <- q.clusters
-                i.nc[length(i.nc) + 1] <- q.nc
+               
                 setDT(q.env)
                 q.env[, type := q.clusters]
-                #- find the centroid for each variable that follows the typology
+                #  find the centroid for each variable that follows the typology
                 q.centroids <- q.env[, lapply(.SD, mean), .SDcols = q.all.vars, by = "type"]
                 setorderv(q.centroids, "type")
                 q.centroids[, type := NULL]
                 q.centroids <- as.matrix(as.data.frame(q.centroids))
                 
-                #- prepare environmental variables for adjustments in script below
+                #  prepare environmental variables for adjustments in script below
                 q.observations <- as.matrix(as.data.frame(q.cluster.env))
                 
                 # Based on two vectors of how strongly the centroids and sites are contracted
                 # recompute environmental variables
                 source("code/helper/new_predictors_for_hard_classification.R")
+                i.success <- i.success + nrow(q.rating.out2)
+                i.nc <- append(i.nc, rep(q.nc, nrow(q.rating.out2)))
+                #print(i.success)
+                # If we reach this part of the loop we have successfully extracted realistic artificial environments 
+                # Thus it makes now sense to store results for later 
+                # Add number to vector for later reference
+                i.n.variables <- append(i.n.variables, rep(q.nvariables, nrow(q.rating.out2)))
+                # Add importance of variables
+                q.importance <- sum(i.vp$importance[q.all.vars])
+                i.importance <- append(i.importance, rep(q.importance, nrow(q.rating.out2)))
+                #  store cluster assignment for later
+                for (foo in 1:nrow(q.rating.out2)) i.cluster.assignments[[length(i.cluster.assignments) + 1]] <- q.clusters
+                rm(foo)
+                # update the vector that determined probabilities 
+                i.variable.counter[q.all.vars] <- i.variable.counter[q.all.vars] + 1 
                 
                 # fuzzy classification
-                q.fuzzy <- lapply(1:within.q, function(x) {
+                q.fuzzy <- lapply(1:length(q.newenv), function(x) {
                         vegclust(
                                 q.newenv[[x]][, which(colnames(q.newenv[[x]]) %in% q.all.vars)],
                                 mobileCenters = q.nc,
@@ -218,18 +306,23 @@ for (i in 1:length(model.files)) {
                                 m = 1.5
                         )
                 })
-                i.fuzzy.assignments[[length(i.fuzzy.assignments) + 1]] <- q.fuzzy
-                # Judge quality of fuzzy classification. Analog to ASW for hard classification. 
-                i.npe <- sapply(q.fuzzy, NPE)
+                for (foo in 1:nrow(q.rating.out2)) i.fuzzy.assignments[[length(i.fuzzy.assignments) + 1]] <- q.fuzzy
+                rm(foo)
+                # Judge quality of fuzzy classification with normalized partitioning entropy.
+                # Analog to ASW for hard classification. 
+                q.npe <- sapply(q.fuzzy, NPE)
+                i.npe <- append(i.npe, q.npe)
                 
                 
-                #- There used to be a balancing step here.
-                #- I removed it.
-                #- Since the spectral clustering is already balanced, and the fuzzy classification uses
-                #- the results of the spectral classification, it is likely not necessary.
-                # Comine MCMC chains for prediction
+                # Combine MCMC chains for prediction
+                
+                # select the last fifty samples from each chain 
+                chain.length <- mcmcPar[scheme_id == model.name, nSamples]
+                chain.length.low <- chain.length - 50
+                chain.sampels <- c(chain.length.low:chain.length, (chain.length + chain.length.low):(2*chain.length), ((2*chain.length)+chain.length.low):(3*chain.length))
+                
                 q.posterior_samples <- poolMcmcChains(i.model$postList)
-                q.selected_samples  <- q.posterior_samples[c(1, length(q.posterior_samples))]
+                q.selected_samples  <- q.posterior_samples[chain.sampels]
                 
                 #  — — — predict new biotic communities  —  —  —  —
                 q.out <- lapply(
@@ -240,36 +333,35 @@ for (i in 1:length(model.files)) {
                                         post = q.selected_samples,
                                         X = pre
                                 )
-                                x <- x[[2]]
+                                # x <- x[[2]]
                                 return(x)
                         }
                 )
-                i.out[[q]] <- q.out
-                #i.predictions [[q]] <- q.out
+                
+                i.out[[length(i.out) + 1]] <- q.out
                 rm(list = ls()[grepl("^q\\.", x = ls())])
                 
         }
         rm(q)
-        #i.out <- lapply(i.out, unlist, recursive = FALSE)
-        i.out <- unlist(i.out, recursive = FALSE)
-        
-        # read in spatial scale for additional information
-        i.ss <- readRDS(spatial.scale[i])
+        i.out2 <- unlist(i.out, recursive = FALSE)
+        #  if more than 200 reduce to 200, if less than two hundred thann all available 
+        i.index <- min(length(i.out2), 200)
+        i.index.range <- 1:i.index
         out_list <-
                 list(
-                        data = i.out,
-                        number_of_clusters = i.nc,
-                        number_of_variables = i.n.variables,
-                        contraction_points  = i.contraction.points,
-                        contraction_centroids = i.contraction.centroids,
-                        variable_importance = i.importance,
-                        asw = i.asw,
-                        npe = i.npe,
-                        hard_cluster_assignment = i.cluster.assignments,
-                        fuzzy_cluster_assignment = i.fuzzy.assignments,
-                        info = i.ss[, c(1, 2, 3, 4)]
+                        data = i.out2[i.index.range],
+                        number_of_clusters = i.nc[i.index.range],
+                        number_of_variables = i.n.variables[i.index.range],
+                        contraction_points  = i.contraction.points[i.index.range],
+                        contraction_centroids = i.contraction.centroids[i.index.range],
+                        variable_importance = i.importance[i.index.range],
+                        asw = i.asw[i.index.range],
+                        npe = i.npe[i.index.range],
+                        hard_cluster_assignment = i.cluster.assignments[i.index.range],
+                        fuzzy_cluster_assignment = i.fuzzy.assignments[i.index.range],
+                        info = i.ss,
+                        converged = convergence_state
                 )
-        # name.i <- ifelse(i < 10, paste0("0",i), as.character(i))
         i.save.name <- sub(x = model.files[i],
                            pattern = "fitted_hmsc_models",
                            replacement = "simulated_data")

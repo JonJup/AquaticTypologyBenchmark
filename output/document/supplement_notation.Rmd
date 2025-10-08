@@ -1,0 +1,40 @@
+## Notation Guide
+
+| Symbol | Description | Example/Notes |
+|:-------|:------------|:--------------|
+| **Data Structure** | | |
+| $D_{i}$ | Data set $i$ | Individual monitoring dataset |
+| $D_{ij}$ | Data set $i$, year $j$ | Data from one dataset in a specific year |
+| $D_{ijk}$ | Data set $i$, year $j$, subset $k$ | Specific sample size subset (e.g., 100, 200, 300 samples) |
+| $N(D_{ij})$ | Sample size | Number of samples in $D_{ij}$ |
+| $\mathcal{Y}_{\text{sim}}$ | Simulated biotic data | Community occurrence/abundance matrices |
+| **Environmental Data** | | |
+| $X$ | Complete set of environmental variables | $X = \{X_{1}, X_{2}, ..., X_{p}\}$ |
+| $p$ | Number of environmental variables | Total available predictors |
+| $\mathcal{X}_{\text{org}}$ | Original environmental data | Empirical environmental conditions |
+| $\mathcal{X}_{\text{sim}}$ | Simulated environmental data | Modified environmental conditions |
+| $\mathcal{X}_{S}$ | Selected environmental variables | Variables used to define typology |
+| $\mathcal{X}_{S^{C}}$ | Neglected environmental variables | Complement set; variables not used in typology |
+| $\mathcal{X}_{\text{enz}}$ | Environmental Zone reference data | All catchments within relevant Environmental Zones |
+| $S \subseteq \{1,...,p\}$ | Subset of variable indices | Randomly selected for each iteration |
+| $\|S\|$ | Size of subset $S$ | Number of variables in the typology (3 to $p$) |
+| **Dilation and Clustering** | | |
+| $c$ | Cluster centroid | Mean position of sites in a cluster |
+| $\bar{c}$ | Overall centroid | Mean position across all clusters |
+| $c_{j}$ | Centroid of cluster $j$ | Position of specific cluster center |
+| $c_{j}^{*}$ | Modified centroid | After separation dilation |
+| $\gamma_{s}$ | Separation dilation factor | $\sim U(0, 0.25)$; moves centroids apart/together |
+| $\gamma_{c}$ | Compactness dilation factor | $\sim U(-0.5, 0.5)$; adjusts within-cluster spread |
+| $\Gamma$ | Dilation score combination | $\Gamma = (\gamma_{s}, \gamma_{c})$ |
+| $d_{i}^{*}$ | Modified distance | Distance from site to modified centroid |
+| **Iteration and Indexing** | | |
+| $i$ | Site index | Individual sampling location ($i = 1, ..., N$) |
+| $j$ | Cluster/type index | Individual cluster or type ($j = 1, ..., T$) |
+| $k$ | Subset index | Index for sample size subsets |
+| $o$ | Iteration index | Simulation iteration ($o = 1, ..., m$) |
+| $m$ | Number of iterations | Total simulation iterations (target: 200) |
+| $h$ | Taxon index | Individual species ($h = 1, ..., H$) |
+| $H$ | Number of taxa | Total species richness |
+| $N$ | Total number of sites | Across all types |
+
+**Note on subscript hierarchy:** Single subscripts denote specific instances (e.g., $D_{i}$ = dataset $i$), double subscripts add temporal detail (e.g., $D_{ij}$ = dataset $i$ in year $j$), and triple subscripts add further subdivision (e.g., $D_{ijk}$ = dataset $i$, year $j$, subset $k$). Superscripts denote modifications (e.g., $c^{*}$) or complements (e.g., $S^{C}$).

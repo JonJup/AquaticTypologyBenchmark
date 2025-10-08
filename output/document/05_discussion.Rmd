@@ -1,0 +1,83 @@
+In our case this will likely include local scale variables such as sediment composition or water pH, which are related but not entirely captured by the large scale variables which are available for all of Europe. 
+We expect to slightly overestimate the relevance of biotic interactions and will consider this in interpretations of the results. 
+
+
+
+
+<!-- Prompts for discussion from claude read teaming --> 
+Paper assumes the problem is methodological (lack of benchmarks) rather than conceptual (whether biovalidity as currently conceived is the right question)
+Risk/Impact: HIGH - If the fundamental concept of "biovalidity" doesn't capture what matters for management decisions, better benchmarks won't help
+Hidden assumption: That typology systems should maximize biological distinctiveness rather than, say, maximize management efficiency or minimize classification error for specific conservation targets
+Recommendation: Add a section explicitly defending why biovalidity (as opposed to "decision-relevant validity" or "management utility") is the appropriate criterion. Consider whether different stakeholders need different validity metrics.
+<!-- the theme other comment --> 
+Current state: "A good typology is separated and compact" (lines defining γ parameters)
+Risk/Impact: MEDIUM - This is asserted without justification
+Challenge: Why is this the right definition? A good typology might instead:
+Maximize beta diversity between types even if types are internally heterogeneous
+Balance multiple objectives (distinctiveness, interpretability, management feasibility)
+Minimize errors for rare/threatened species even if overall compactness is lower
+Recommendation: Defend this definition or reframe as "one conception of quality" rather than "the" definition
+
+
+<!-- --> 
+The paper discards datasets with AUC < 0.75, but never discusses what happens to biovalidity metrics in systems that are inherently hard to predict
+
+<!-- 
+Context-dependence of benchmarks: A critical feature of our framework is that benchmarks vary with system properties. We explicitly reject 'one-size-fits-all' thresholds (e.g., 'PERMANOVA R² must exceed 0.15') in favor of conditional expectations. For example, [insert example once you have results: e.g., 'fish datasets at continental scales with >1000 samples typically show ANOSIM R values of X-Y, while diatom datasets at catchment scales with 100-200 samples show R values of A-B']. This context-dependence reflects genuine ecological differences: highly mobile taxa should show weaker typology effects than sessile organisms; systems dominated by stochasticity should show lower biovalidity than those with strong environmental filtering; coarse spatial scales should show different patterns than fine scales. Users can therefore compare their typology against systems with similar ecological and sampling characteristics rather than against an arbitrary universal standard.
+
+My addition: This context-dependence extends to the space and environments we considered. Only those simulated environments were used to simulate communities, that were similar to actual environments within their Environmental Zones. Regions outside of Europe have different environments potentially influencing benchmark performance. 
+
+--> 
+
+<!-- --> 
+Current state: No discussion of how benchmarks might be misused
+Risk/Impact: MEDIUM - Once published, benchmarks take on normative force
+Potential problems:
+
+Managers might reject valid typologies because they fall below arbitrary benchmark thresholds
+Funding agencies might require specific benchmark performance
+Focus on passing benchmarks might divert attention from actual conservation outcomes
+Different taxonomic groups meeting different benchmarks might be interpreted as some being "better" indicators
+
+
+Recommendation: Add a discussion section on responsible use of benchmarks, emphasizing they're descriptive (what is typical) not prescriptive (what must be achieved)
+
+
+
+<!-- --> 
+
+Current state: Benchmarks derived from available monitoring data (mostly European, mostly WFD-related)
+Risk/Impact: MEDIUM - Benchmarks may not generalize to:
+
+Tropical systems
+Systems with different anthropogenic pressure signatures
+Regions with different sampling histories
+
+
+Hidden assumption: European freshwater systems are representative of global freshwater ecology
+Recommendation: Explicitly scope your benchmarks to "temperate, well-monitored systems" and discuss generalization limits
+
+
+
+<!-- --> 
+ISSUE #28: The Quantification Imperative
+
+Current state: Assumes all biovalidity can and should be quantified with continuous metrics
+Blind spot: Some aspects of typology usefulness may be qualitative, context-dependent, or emergent properties
+What's not being asked: "Are there forms of validity we can't capture numerically?"
+Recommendation: Acknowledge that benchmarks complement but don't replace expert judgment and context-specific evaluation
+
+<!-- --> 
+ISSUE #30: The More-Is-Better Trap
+
+Current state: Implicitly assumes higher biovalidity is always better
+Counterargument: For some management purposes, coarser but more robust classifications might outperform fine-grained but sensitive ones
+Example: A typology with lower biovalidity but better stability across sampling years might be more useful for long-term monitoring
+Recommendation: Consider benchmarking stability/reproducibility alongside validity
+
+
+
+<!-- 
+The dilation ranges for modifying environmental spaces were determined through exploratory calibration rather than from theoretical principles. Future work could derive these ranges more systematically, for instance by analyzing the separation and compactness characteristics of existing typology systems to empirically bound the 'plausible' parameter space. However, our pragmatic approach ensures sufficient variation in simulated typology quality while maintaining environmental realism, which was the operational requirement for benchmark derivation.
+
+--> 

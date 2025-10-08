@@ -1,4 +1,4 @@
-prop_sample <- function(x, N) {
+prop_sample <- function(x, N, string = F) {
         # Calculate original proportions
         props <- table(x) / length(x)
         
@@ -23,8 +23,13 @@ prop_sample <- function(x, N) {
         # Sample from each group
         result <- numeric(0)
         for(num in names(n_each)) {
+                if (!string){
                 positions <- which(x == as.numeric(num))
                 result <- c(result, sample(positions, n_each[num]))
+                } else {
+                        positions <- which(x == num)
+                        result <- c(result, sample(positions, n_each[num]))     
+                }
         }
         
         # Return sorted positions
