@@ -50,12 +50,8 @@ The pipeline is deliberately modular so that each component — typology constru
 │   ├── raw/              # (Gitignored) source data — see Data section
 │   └── processed/        # Harmonised inputs produced by 01_prepare_data.R
 ├── outputs/              # Fitted models, predictions, figures, tables
-├── renv.lock             # Pinned R package versions (renv)
-├── DESCRIPTION           # Optional — if the repo is structured as an R package
 └── README.md
 ```
-
-*(Adjust the tree to match the actual layout before publishing.)*
 
 ## Data
 
@@ -86,16 +82,10 @@ System-level dependencies:
 
 ## Reproducing the analyses
 
-The full pipeline can be reproduced by running the numbered scripts in order. Intermediate outputs are cached under `outputs/`, so individual stages can be re-run without repeating the whole workflow.
+The full pipeline can be reproduced by running the numbered scripts in order. Intermediate outputs are cached, so individual stages can be re-run without repeating the whole workflow.
+Parts of the analysis were run on HPC at the University of Helsinki. These used singularity containers. The code to compile the container is available unter 'container/'
 
-```bash
-Rscript scripts/01_prepare_data.R        config/diatoms.yml
-Rscript scripts/02_build_typology.R      config/diatoms.yml
-Rscript scripts/03_fit_hmsc.R            config/diatoms.yml
-Rscript scripts/04_simulate_counterfactuals.R config/diatoms.yml
-Rscript scripts/05_fit_qrf_benchmarks.R  config/diatoms.yml
-Rscript scripts/06_evaluate.R            config/diatoms.yml
-```
+
 
 Repeat with the configuration file for each taxonomic group.
 
