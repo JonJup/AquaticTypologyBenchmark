@@ -43,9 +43,12 @@ The pipeline is deliberately modular so that each component — typology constru
 │   ├── 04_simulate_counterfactuals.R
 │   ├── 05_fit_qrf_benchmarks.R
 │   └── 06_evaluate.R
+├── docs/
+│   ├── 01_preparation.md
+│   ├── Hmsc.md
+│   ├── simulation_and_qrf.md
+│   ├── results_to_paper.md
 ├── hpc/                  # SLURM / Singularity templates for HMSC fitting
-├── config/               # YAML configuration for each taxonomic group
-├── shiny/                # PULSE Shiny application
 ├── data/
 │   ├── raw/              # (Gitignored) source data — see Data section
 │   └── processed/        # Harmonised inputs produced by 01_prepare_data.R
@@ -83,7 +86,7 @@ System-level dependencies:
 ## Reproducing the analyses
 
 The full pipeline can be reproduced by running the numbered scripts in order. Intermediate outputs are cached, so individual stages can be re-run without repeating the whole workflow.
-Parts of the analysis were run on HPC at the University of Helsinki. These used singularity containers. The code to compile the container is available unter 'container/'
+Parts of the analysis were run on HPC at the University of Helsinki. These used singularity containers. The code to compile the container is available unter 'hpc/'
 
 
 
@@ -91,10 +94,10 @@ Repeat with the configuration file for each taxonomic group.
 
 ### HPC workflow
 
-HMSC fitting for the full dataset is computationally intensive. Templates in `hpc/` are provided for SLURM clusters running Singularity. A typical invocation:
+HMSC fitting for all the datasets is computationally intensive. Templates in `hpc/` are provided for SLURM clusters running Singularity. A typical invocation:
 
 ```bash
-sbatch hpc/fit_hmsc.slurm config/macroinvertebrates.yml
+sbatch hpc/fit_hmsc.slurm
 ```
 
 The template exposes knobs for the number of chains, thinning, transient period, and memory per task, matching the settings reported in the manuscript.
@@ -108,18 +111,7 @@ The PULSE Shiny app provides an interactive view of the benchmarks:
 - KNN-based imputation of missing environmental predictors
 - Diagnostic overlays against the reference distribution of each ecotype
 
-Run locally with:
-
-```r
-shiny::runApp("shiny")
-```
-
 A hosted version is available at: **[URL placeholder]**.
-
-## Related software
-
-- **SKATER-CON** — R package for fuzzy spatial clustering via coassociation matrices, used to build the ecotypology: [link placeholder].
-- **DiaThor** — diatom ecological indicator package, used for cross-checking diatom-based inference: [link placeholder].
 
 ## Citation
 
@@ -145,7 +137,8 @@ If you use PULSE, please cite both the paper and the archived code release:
 
 ## Funding and acknowledgments
 
-This work was supported by the **DFG Walter Benjamin Fellowship** (grant no. [xxx]) and benefited from collaboration with **JRC ECOSTAT** and the wider European freshwater monitoring community. We thank the data providers listed in the manuscript supplement for sharing harmonised biological and environmental records.
+This work was supported by the **DFG Walter Benjamin Fellowship** (grant no. 557888845). We thank the data providers listed in the manuscript supplement for sharing harmonised biological and environmental records.
+We also wish to thank the Finnish Computing Competence Infrastructure (FCCI) for supporting this project with computational and data storage resources.
 
 ## License
 
