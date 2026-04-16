@@ -12,18 +12,15 @@ Jupke et al (*in preparation*) Grading on a Curve: Simulation-Based Benchmarks f
 
 <!-- > **[Full title]** (202x). [Authors]. *[Journal]*. DOI: [xx.xxxx/xxxxxx]. Preprint: [link]. --> 
 
-It contains the code, configuration, and (where licensing permits) derived data needed to reproduce the ecotypologies, HMSC joint species distribution models, QRF benchmarks, and fuzzy-clustering analyses reported in the paper, together with the Shiny application used to explore the results.
+It contains the code to reproduce the results reported in the paper. As well as the document itself. 
 
 ---
 
 ## Overview
 
-PULSE develops **pan-European ecological benchmarks** for freshwater biomonitoring by combining:
+We have developed **pan-European ecological benchmarks** for freshwater typology systems using a large [database](MIDFIRELINE) of diatoms, fish, invertebrates, and macrophytes, [joint species distribution models](https://github.com/hmsc-r/hmsc-hpc/tree/main) fitted independently to subsets of this database, a novel [modification algorithm](code/02_models_simulation_evaluation/09_simulate_data.R) for environments  
 
-- **Data-driven ecotypologies** built from catchment- and reach-scale environmental descriptors, using fuzzy spatial clustering (SKATER-CON).
-- **Joint species distribution models** (HMSC) fitted separately for diatoms, fish, macroinvertebrates, and macrophytes, used to partition community variation into environmental, spatial, and residual components and to generate counterfactual simulations.
-- **Context-dependent benchmarks** derived from Quantile Regression Forests (QRF), producing reference-condition expectations conditioned on the typological and environmental context of each site.
-- **Typology evaluation** against crisp and fuzzy alternatives using ANOSIM, PERMANOVA, classification strength, and coherence diagnostics.
+
 
 The pipeline is deliberately modular so that each component — typology construction, HMSC fitting, QRF benchmarking, and evaluation — can be re-run independently against updated inputs.
 
